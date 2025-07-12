@@ -1,0 +1,27 @@
+# Brokerage API
+smartapi-python
+pyotp
+logzero
+websocket-client
+
+# Data Layer
+pymongo
+pandas
+numpy
+
+# Microservices & Communication
+# For performance and data analysis
+fastapi
+pika
+uvicorn
+
+# AI/ML & Backtesting
+scikit-learn
+mlflow
+vectorbt
+pandas-ta
+
+# Utilities
+python-dotenv
+tenacity
+ 
