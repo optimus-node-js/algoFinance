@@ -1,0 +1,130 @@
+# Service Configuration for Algorithmic Trading System
+# This file defines the configuration for all microservices
+
+system:
+  name: "Algorithmic Trading System"
+  version: "1.0.0"
+  environment: "development"
+
+infrastructure:
+  mongodb:
+    host: "localhost"
+    port: 27017
+    database: "algofinance"
+    connection_timeout: 5000
+    
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    virtual_host: "/"
+    connection_timeout: 10
+    
+  redis:  # Future caching layer
+    host: "localhost"
+    port: 6379
+    db: 0
+
+services:
+  portfolio_service:
+    name: "Portfolio Management Service"
+    module: "server.src.services.portfolio_management.portfolio_service"
+    class: "PortfolioService"
+    dependencies: ["mongodb", "rabbitmq", "angel_one_api"]
+    critical: true
+    restart_on_failure: true
+    health_check_interval: 30
+    max_restart_attempts: 3
+    
+  order_book_service:
+    name: "Order Book Service"
+    module: "server.src.services.order_book.order_book_service"
+    class: "OrderBookService"
+    dependencies: ["mongodb", "rabbitmq", "angel_one_api"]
+    critical: true
+    restart_on_failure: true
+    health_check_interval: 30
+    max_restart_attempts: 3
+    
+  market_data_service:
+    name: "Market Data Service"
+    module: "server.src.services.market_data.market_data_service"
+    class: "MarketDataService"
+    dependencies: ["mongodb", "rabbitmq", "angel_one_api"]
+    critical: true
+    restart_on_failure: true
+    health_check_interval: 15  # More frequent for market data
+    max_restart_attempts: 5
+    
+  data_ingestion_service:
+    name: "Data Ingestion Service"
+    module: "server.src.data_ingestion.stream"
+    class: "DataStreamer"
+    dependencies: ["mongodb", "rabbitmq", "angel_one_api", "market_data_service"]
+    critical: true
+    restart_on_failure: true
+    health_check_interval: 20
+    max_restart_attempts: 3
+    
+  risk_management_service:  # Future service
+    name: "Risk Management Service"
+    module: "server.src.services.risk_management.risk_service"
+    class: "RiskManagementService"
+    dependencies: ["mongodb", "rabbitmq", "angel_one_api", "portfolio_service"]
+    critical: true
+    restart_on_failure: true
+    health_check_interval: 30
+    max_restart_attempts: 3
+
+service_stacks:
+  full_system:
+    description: "Complete algorithmic trading system"
+    services:
+      - "portfolio_service"
+      - "order_book_service"
+      - "market_data_service"
+      - "data_ingestion_service"
+      - "risk_management_service"
+      
+  trading_stack:
+    description: "Core trading services for live trading"
+    services:
+      - "market_data_service"
+      - "portfolio_service"
+      - "order_book_service"
+      - "risk_management_service"
+      
+  data_stack:
+    description: "Data collection and processing services"
+    services:
+      - "market_data_service"
+      - "data_ingestion_service"
+      
+  minimal_stack:
+    description: "Minimal services for development and testing"
+    services:
+      - "market_data_service"
+
+monitoring:
+  health_check_interval: 30
+  log_level: "INFO"
+  metrics_collection: true
+  alert_on_service_failure: true
+  performance_monitoring: true
+
+angel_one_api:
+  rate_limits:
+    data_requests: 9  # requests per second
+    order_requests: 18  # requests per second
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 1  # seconds
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_rotation: true
+  max_file_size: "10MB"
+  backup_count: 5
+
+
+

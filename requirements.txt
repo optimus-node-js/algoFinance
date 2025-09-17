@@ -1,0 +1,6 @@
+scipy==1.13.1
+pandas-ta==0.3.14b
+vectorbt==0.26.2
+python-dotenv==0.21.1
+limiter==0.3.1
+joblib==1.4.2 

@@ -19,6 +19,7 @@ To develop a fully automated, 24/7 algorithmic trading system using Python and t
 - **Data-Driven:** All trading decisions will be based on real-time and historical market data. AI/ML models will be central to generating trading signals.
 - **Automation:** The system is intended to run continuously with no manual intervention required for trading operations.
 - **Local Deployment:** The system will be deployed and run on a local machine without containerization (Docker).
+- **Self-Improvement & Scalability:** The architecture must support continuous learning, model versioning, and performance tracking (MLOps). It must be scalable to accommodate more complex and powerful predictive models over time.
 
 ## 4. Initial Scope (Phase 1)
 

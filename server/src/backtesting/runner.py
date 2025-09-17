@@ -4,11 +4,12 @@ import sys
 import os
 from datetime import datetime, UTC
 
-# Add the parent 'src' directory to the path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Add the project root directory to the Python path
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(PROJECT_ROOT)
 
-from database.connect import get_db
-from strategy.base_strategy import BaseStrategy
+from server.src.database.connect import get_db
+from server.src.strategy.base_strategy import BaseStrategy
 
 class BacktestRunner:
     def __init__(self, strategy: BaseStrategy, historical_data: pd.DataFrame, symbol: str):
@@ -51,7 +52,12 @@ class BacktestRunner:
         
         # 4. Save results to database
         if self.results_collection is not None:
-            self._save_results(stats)
+            # The `stats` object can be a DataFrame for grouped backtests.
+            # We only save to DB if it's a Series (for a single run).
+            if isinstance(stats, pd.Series):
+                self._save_results(stats)
+            else:
+                print("\n⚠️ Backtest generated multi-column stats (grouped backtest). Results not saved to DB.")
         else:
             print("⚠️ Could not save results to DB. No database connection.")
             
@@ -73,13 +79,16 @@ class BacktestRunner:
                 return value.item() # General method for numpy types
             return value
 
+        duration = stats.get('Duration')
+        duration_days = duration.days if isinstance(duration, pd.Timedelta) else None
+
         result_doc = {
             "strategy_name": type(self.strategy).__name__,
             "symbol": self.symbol,
             "backtest_timestamp": datetime.now(UTC),
             "start_date": convert_type(stats.get('Start')),
             "end_date": convert_type(stats.get('End')),
-            "duration_days": convert_type(stats.get('Duration').days if pd.notna(stats.get('Duration')) else None),
+            "duration_days": convert_type(duration_days),
             "initial_cash": convert_type(stats.get('Initial Cash')),
             "final_value": convert_type(stats.get('End Value')),
             "total_return_pct": convert_type(stats.get('Total Return [%]')),
@@ -90,6 +99,10 @@ class BacktestRunner:
             "profit_factor": convert_type(stats.get('Profit Factor')),
             "full_stats": {k: convert_type(v) for k, v in stats.to_dict().items()}
         }
+
+        if self.results_collection is None:
+            print("\n⚠️ Could not save results to DB. Collection not available.")
+            return
         
         try:
             self.results_collection.insert_one(result_doc)
