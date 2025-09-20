@@ -22,12 +22,15 @@ Rate Limit: STRICTLY ENFORCED 1 req/sec per key
 import time
 from typing import Dict, List, Optional, Any
 # Import new Angel One logger
-from ..logger import get_api_logger
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+from logger import get_api_logger
 from datetime import datetime, UTC
 
 # Import our rate limiting system
-from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
-from ..rate_limiter.api_limits import API_LIMITS
+from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
+from rate_limiter.api_limits import API_LIMITS
 
 logger = get_api_logger("logout")
 
@@ -62,9 +65,12 @@ async def logout(_rate_limit_permit: Optional[Dict] = None) -> Dict[str, Any]:
             raise LogoutError("No rate limit permit - internal error")
         
         # Get Angel One client
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
-        angel_client = ConnectionManager.get_smartapi_client()
+        # angel_client already set above
         if not angel_client:
             raise LogoutError("Angel One API client not available")
         
@@ -140,7 +146,10 @@ async def _get_session_info() -> Dict[str, Any]:
     """
     try:
         # Get session details from connection manager
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
         # This would extract current session info
         # Implementation depends on your connection manager design
@@ -219,7 +228,10 @@ async def _reset_connection_manager() -> bool:
     """Reset connection manager state."""
     try:
         # Reset connection manager to clean state
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
         # This would reset the connection manager
         # Implementation depends on your connection manager design

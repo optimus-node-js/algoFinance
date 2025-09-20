@@ -31,11 +31,15 @@ import time
 from typing import Dict, List, Tuple, Optional, Any
 
 # Import our rate limiting system
-from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
-from ..rate_limiter.api_limits import API_LIMITS
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
+from rate_limiter.api_limits import API_LIMITS
 
 # Import new Angel One logger
-from ..logger import get_api_logger
+from logger import get_api_logger
 
 logger = get_api_logger("get_ltp_data")
 
@@ -70,13 +74,15 @@ async def get_ltp_data(
     """
     try:
         # Get Angel One client (using the API key from rate limit permit)
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
         if not _rate_limit_permit:
             raise LTPDataError("No rate limit permit - internal error")
         
-        # Get the specific client for this API key
-        angel_client = ConnectionManager.get_smartapi_client()
+        # angel_client already set from interface above
         if not angel_client:
             raise LTPDataError("Angel One API client not available")
         

@@ -5,12 +5,16 @@ Angel One Fund Manager
 Fund management and margin tracking.
 """
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
+
 from typing import Dict, Any
 # Import new Angel One logger
-from ..logger import get_service_logger
+from logger import get_service_logger
 from datetime import datetime, UTC
 
-from ..methods.get_rms import get_rms
+from methods.get_rms import get_rms
 
 logger = get_service_logger("fund_manager")
 

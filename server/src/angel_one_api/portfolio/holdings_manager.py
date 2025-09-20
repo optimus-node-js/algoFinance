@@ -20,6 +20,10 @@ Features:
 Author: AI Trading System
 """
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
+
 import time
 import asyncio
 from typing import Dict, List, Optional, Any, Tuple
@@ -28,11 +32,11 @@ from dataclasses import dataclass
 from collections import defaultdict
 
 # Import our methods
-from ..methods.get_holding import get_holding
-from ..methods.get_all_holding import get_all_holding, get_comprehensive_portfolio_analysis
+from methods.get_holding import get_holding
+from methods.get_all_holding import get_all_holding, get_comprehensive_portfolio_analysis
 
 # Import new Angel One logger
-from ..logger import get_service_logger
+from logger import get_service_logger
 
 logger = get_service_logger("holdings_manager")
 

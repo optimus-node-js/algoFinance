@@ -5,12 +5,16 @@ Angel One P&L Reports
 Comprehensive P&L reporting and analysis.
 """
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
+
 from typing import Dict, List, Any
 # Import new Angel One logger
-from ..logger import get_service_logger
+from logger import get_service_logger
 from datetime import datetime, UTC
 
-from ..methods.get_trade_book import get_trade_book
+from methods.get_trade_book import get_trade_book
 
 logger = get_service_logger("pnl_reports")
 

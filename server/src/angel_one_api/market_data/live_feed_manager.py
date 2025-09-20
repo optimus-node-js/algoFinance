@@ -20,6 +20,10 @@ Features:
 Author: AI Trading System
 """
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
+
 import time
 import asyncio
 from typing import Dict, List, Optional, Any, Set
@@ -28,11 +32,11 @@ from dataclasses import dataclass
 import json
 
 # Import our rate limiting and methods
-from ..rate_limiter.rate_controller import rate_limited, APIPriority
-from ..methods.get_ltp_data import get_ltp_data, get_bulk_ltp_data
+from rate_limiter.rate_controller import rate_limited, APIPriority
+from methods.get_ltp_data import get_ltp_data, get_bulk_ltp_data
 
 # Import new Angel One logger
-from ..logger import get_service_logger
+from logger import get_service_logger
 
 logger = get_service_logger("live_feed_manager")
 

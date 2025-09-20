@@ -19,10 +19,13 @@ Author: AI Trading System
 import asyncio
 from typing import Dict, Optional, Any
 # Import new Angel One logger
-from ..logger import get_api_logger
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+from logger import get_api_logger
 from datetime import datetime, UTC
 
-from ..rate_limiter.rate_controller import rate_limited, APIPriority
+from rate_limiter.rate_controller import rate_limited, APIPriority
 
 logger = get_api_logger("get_market_status")
 
@@ -43,9 +46,12 @@ async def get_market_status(_rate_limit_permit: Optional[Dict] = None) -> Dict[s
             - timestamp: str
     """
     try:
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
-        angel_client = ConnectionManager.get_smartapi_client()
+        # angel_client already set above
         if not angel_client:
             raise MarketStatusError("Angel One API client not available")
         

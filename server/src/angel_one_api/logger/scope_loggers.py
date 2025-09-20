@@ -101,7 +101,10 @@ class ScopeLogger:
         
         # Update statistics
         self.stats["total_logs"] += 1
-        self.stats[f"{level.lower()}_logs"] += 1
+        level_key = f"{level.lower()}_logs"
+        if level_key not in self.stats:
+            self.stats[level_key] = 0
+        self.stats[level_key] += 1
     
     def trace(self, message: str, extra: Optional[Dict[str, Any]] = None, db_store: bool = True):
         """Log trace level message (most detailed)."""

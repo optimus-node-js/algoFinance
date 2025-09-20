@@ -5,13 +5,17 @@ Angel One Positions Manager
 Enhanced position tracking and management with real-time P&L calculation.
 """
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
+
 import asyncio
 from typing import Dict, List, Optional, Any
 # Import new Angel One logger
-from ..logger import get_service_logger
+from logger import get_service_logger
 from datetime import datetime, UTC
 
-from ..methods.get_position import get_position, get_detailed_positions
+from methods.get_position import get_position, get_detailed_positions
 
 logger = get_service_logger("positions_manager")
 

@@ -22,12 +22,15 @@ Rate Limit: STRICTLY ENFORCED 1 req/sec per key
 import time
 from typing import Dict, List, Optional, Any
 # Import new Angel One logger
-from ..logger import get_api_logger
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+from logger import get_api_logger
 from datetime import datetime, UTC, timedelta
 
 # Import our rate limiting system
-from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
-from ..rate_limiter.api_limits import API_LIMITS
+from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
+from rate_limiter.api_limits import API_LIMITS
 
 logger = get_api_logger("generate_tokens")
 
@@ -67,9 +70,12 @@ async def generate_tokens(
             raise TokenGenerationError("No rate limit permit - internal error")
         
         # Get Angel One client
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
-        angel_client = ConnectionManager.get_smartapi_client()
+        # angel_client already set above
         if not angel_client:
             raise TokenGenerationError("Angel One API client not available")
         
@@ -160,7 +166,10 @@ async def auto_refresh_tokens() -> Dict[str, Any]:
     """
     try:
         # Get stored refresh token (would typically come from secure storage)
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
         # This is a simplified implementation - in practice, you'd have
         # secure token storage and retrieval mechanisms
@@ -197,7 +206,10 @@ def _get_stored_refresh_token() -> Optional[str]:
         # (database, encrypted file, environment variables, etc.)
         
         # For now, we'll try to get it from connection manager
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
         # This is a placeholder - actual implementation would vary
         # based on your storage mechanism
@@ -244,7 +256,10 @@ async def _update_connection_tokens(token_result: Dict[str, Any]) -> bool:
     """
     try:
         # Update connection manager with new tokens
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
         # This would update the active connection with new tokens
         # Implementation depends on your connection manager design

@@ -25,10 +25,14 @@ from datetime import datetime, UTC, timedelta
 from SmartApi import SmartConnect
 
 # Import our components
-from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 
 # Import new Angel One logger
-from ..logger import get_service_logger
+from logger import get_service_logger
 
 logger = get_service_logger("auth_manager")
 
@@ -406,7 +410,7 @@ class AuthManager:
                 client = self._authenticated_clients[key_name]
                 
                 # Call logout API with rate limiting
-                from ..methods.logout import logout
+                from methods.logout import logout
                 logout_result = await logout()
                 
                 # Clean up local data regardless of API response

@@ -20,10 +20,14 @@ from typing import Dict, Optional, Any
 from datetime import datetime, UTC, timedelta
 
 # Import our rate limiting system
-from ..rate_limiter.rate_controller import rate_limited, APIPriority
+from rate_limiter.rate_controller import rate_limited, APIPriority
 
 # Import new Angel One logger
-from ..logger import get_service_logger
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+from logger import get_service_logger
 
 logger = get_service_logger("token_manager")
 
@@ -63,9 +67,11 @@ class TokenManager:
                 raise TokenError("No rate limit permit - internal error")
             
             # Get Angel One client
-            from core.connections import ConnectionManager
+            # Use interface to get SmartAPI client
+            from interface import get_angel_one_interface
+            interface = get_angel_one_interface()
+            angel_client = interface.smart_api
             
-            angel_client = ConnectionManager.get_smartapi_client()
             if not angel_client:
                 raise TokenError("Angel One API client not available")
             

@@ -28,7 +28,11 @@ from .api_limits import API_LIMITS, APIPriority
 from .api_limit_config import ANGEL_ONE_API_LIMITS
 
 # Import new Angel One logger
-from ..logger import get_infrastructure_logger
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+from logger import get_infrastructure_logger
 
 logger = get_infrastructure_logger("rate_controller")
 

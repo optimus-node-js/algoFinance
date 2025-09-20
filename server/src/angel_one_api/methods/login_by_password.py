@@ -25,12 +25,15 @@ Rate Limit: STRICTLY ENFORCED 1 req/sec per key
 import time
 from typing import Dict, Optional, Any
 # Import new Angel One logger
-from ..logger import get_api_logger
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+from logger import get_api_logger
 import pyotp
 
 # Import our rate limiting system
-from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
-from ..rate_limiter.api_limits import API_LIMITS
+from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
+from rate_limiter.api_limits import API_LIMITS
 
 logger = get_api_logger("login_by_password")
 
@@ -69,7 +72,10 @@ async def login_by_password(
         
         # Get Angel One client for authentication
         from SmartApi.smartConnect import SmartConnect
-        from core.connections import ConnectionManager
+        # Use interface to get SmartAPI client
+        from interface import get_angel_one_interface
+        interface = get_angel_one_interface()
+        angel_client = interface.smart_api
         
         # Get API key from the permit (rate controller selected the best key)
         api_key_id = _rate_limit_permit['api_key_id']

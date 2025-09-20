@@ -6,13 +6,17 @@ Historical data management for Angel One SmartAPI.
 Integrates with getCandleData method for comprehensive historical analysis.
 """
 
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
+
 import asyncio
 from typing import Dict, List, Optional, Any
 # Import new Angel One logger
-from ..logger import get_service_logger
+from logger import get_service_logger
 from datetime import datetime, UTC, timedelta
 
-from ..methods.get_candle_data import get_candle_data
+from methods.get_candle_data import get_candle_data
 
 logger = get_service_logger("historical_manager")
 

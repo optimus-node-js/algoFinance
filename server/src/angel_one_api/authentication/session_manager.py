@@ -24,7 +24,11 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 
 # Import new Angel One logger
-from ..logger import get_service_logger
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+from logger import get_service_logger
 
 logger = get_service_logger("session_manager")
 
@@ -294,7 +298,7 @@ class SessionManager:
             
             # Optional: Call logout API
             try:
-                from ..methods.logout import logout
+                from methods.logout import logout
                 await logout()
             except Exception as e:
                 logger.warning(f"⚠️ Logout API call failed for {session_id}: {e}")
