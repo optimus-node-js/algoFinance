@@ -36,7 +36,6 @@ Author: AI Trading System
 """
 
 import asyncio
-import logging
 from typing import Dict, List, Optional, Any, Union
 from datetime import datetime, UTC
 
@@ -60,7 +59,10 @@ from .methods import (
     generate_tokens, logout
 )
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from .logger import get_infrastructure_logger
+
+logger = get_infrastructure_logger("interface")
 
 class AngelOneInterface:
     """
@@ -111,7 +113,10 @@ class AngelOneInterface:
             bool: Success status
         """
         try:
-            logger.info("🔧 Configuring Angel One interface...")
+            logger.info("Configuring Angel One interface", {
+                "total_keys": len(api_keys_config),
+                "action": "configuration_start"
+            })
             
             # Configure authentication
             self.auth_manager.configure_api_keys(api_keys_config)
@@ -126,14 +131,23 @@ class AngelOneInterface:
                 self._api_keys_configured = True
                 self._initialized = True
                 
-                logger.info(f"✅ Angel One interface configured: {successful_logins}/{total_keys} keys active")
+                logger.success(f"Angel One interface configured successfully", {
+                    "successful_logins": successful_logins,
+                    "total_keys": total_keys,
+                    "success_rate": f"{(successful_logins/total_keys)*100:.1f}%"
+                })
                 return True
             else:
-                logger.error("❌ Angel One interface configuration failed: No successful logins")
+                logger.error("Angel One interface configuration failed", 
+                           error_code="CONFIG001",
+                           extra={"reason": "no_successful_logins", "total_keys": total_keys})
                 return False
                 
         except Exception as e:
-            logger.error(f"❌ Angel One interface configuration failed: {e}")
+            logger.error("Angel One interface configuration failed", 
+                        error=e, 
+                        error_code="CONFIG002",
+                        extra={"total_keys": len(api_keys_config)})
             return False
     
     def _ensure_initialized(self):
@@ -160,7 +174,11 @@ class AngelOneInterface:
         self._stats['last_call_time'] = start_time
         
         try:
-            logger.debug(f"🔄 {operation_name} starting...")
+            logger.debug(f"API operation starting", {
+                "operation": operation_name,
+                "args_count": len(args),
+                "kwargs_count": len(kwargs)
+            })
             
             # Call the operation
             if asyncio.iscoroutinefunction(operation_func):
@@ -171,7 +189,10 @@ class AngelOneInterface:
             self._stats['successful_calls'] += 1
             
             elapsed = (datetime.now(UTC) - start_time).total_seconds()
-            logger.debug(f"✅ {operation_name} completed in {elapsed:.3f}s")
+            logger.performance(operation_name, elapsed, True, {
+                "result_type": type(result).__name__,
+                "result_size": len(str(result)) if result else 0
+            })
             
             return result
             
@@ -179,7 +200,21 @@ class AngelOneInterface:
             self._stats['failed_calls'] += 1
             
             elapsed = (datetime.now(UTC) - start_time).total_seconds()
-            logger.error(f"❌ {operation_name} failed after {elapsed:.3f}s: {e}")
+            logger.error(f"API operation failed", 
+                        error=e,
+                        error_code="API_OP001",
+                        extra={
+                            "operation": operation_name,
+                            "duration": elapsed,
+                            "args_count": len(args),
+                            "kwargs_count": len(kwargs)
+                        })
+            
+            # Also log performance for failed operations
+            logger.performance(operation_name, elapsed, False, {
+                "error_type": type(e).__name__,
+                "error_message": str(e)
+            })
             
             raise
     

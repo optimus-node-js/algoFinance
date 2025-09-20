@@ -29,13 +29,15 @@ Rate Limit: STRICTLY ENFORCED 10 req/sec per key
 import asyncio
 import time
 from typing import Dict, List, Tuple, Optional, Any
-import logging
 
 # Import our rate limiting system
 from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from ..rate_limiter.api_limits import API_LIMITS
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from ..logger import get_api_logger
+
+logger = get_api_logger("get_ltp_data")
 
 class LTPDataError(Exception):
     """Raised when LTP data cannot be fetched."""

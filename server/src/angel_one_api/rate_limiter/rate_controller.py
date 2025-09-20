@@ -23,12 +23,14 @@ from datetime import datetime, timedelta, UTC
 import threading
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
-import logging
 
 from .api_limits import API_LIMITS, APIPriority
 from .api_limit_config import ANGEL_ONE_API_LIMITS
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from ..logger import get_infrastructure_logger
+
+logger = get_infrastructure_logger("rate_controller")
 
 class RateLimitExceeded(Exception):
     """Raised when API rate limit would be exceeded."""
