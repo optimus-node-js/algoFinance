@@ -19,12 +19,14 @@ import time
 import asyncio
 import json
 from typing import Dict, Optional, List, Any
-import logging
 from datetime import datetime, UTC, timedelta
 from dataclasses import dataclass, asdict
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from ..logger import get_service_logger
+
+logger = get_service_logger("session_manager")
 
 class SessionError(Exception):
     """Raised when session operations fail."""

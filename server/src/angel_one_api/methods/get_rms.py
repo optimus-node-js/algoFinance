@@ -24,14 +24,15 @@ Rate Limit: STRICTLY ENFORCED 2 req/sec per key
 
 import time
 from typing import Dict, List, Optional, Any
-import logging
+# Import new Angel One logger
+from ..logger import get_api_logger
 from datetime import datetime, UTC
 
 # Import our rate limiting system
 from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from ..rate_limiter.api_limits import API_LIMITS
 
-logger = logging.getLogger(__name__)
+logger = get_api_logger("get_rms")
 
 class RMSError(Exception):
     """Raised when RMS data fetching fails."""

@@ -23,7 +23,6 @@ Author: AI Trading System
 import time
 import asyncio
 from typing import Dict, List, Optional, Any, Tuple
-import logging
 from datetime import datetime, UTC, timedelta
 from dataclasses import dataclass
 
@@ -31,7 +30,10 @@ from dataclasses import dataclass
 from ..rate_limiter.rate_controller import rate_limited, APIPriority
 from ..methods.search_scrip import search_scrip, find_best_equity_match
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from ..logger import get_service_logger
+
+logger = get_service_logger("instrument_manager")
 
 class InstrumentError(Exception):
     """Raised when instrument operations fail."""

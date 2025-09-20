@@ -6,12 +6,13 @@ Comprehensive P&L reporting and analysis.
 """
 
 from typing import Dict, List, Any
-import logging
+# Import new Angel One logger
+from ..logger import get_service_logger
 from datetime import datetime, UTC
 
 from ..methods.get_trade_book import get_trade_book
 
-logger = logging.getLogger(__name__)
+logger = get_service_logger("pnl_reports")
 
 class ReportsError(Exception):
     """Raised when report generation fails."""

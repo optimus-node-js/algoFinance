@@ -17,13 +17,15 @@ Author: AI Trading System
 import time
 import asyncio
 from typing import Dict, Optional, Any
-import logging
 from datetime import datetime, UTC, timedelta
 
 # Import our rate limiting system
 from ..rate_limiter.rate_controller import rate_limited, APIPriority
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from ..logger import get_service_logger
+
+logger = get_service_logger("token_manager")
 
 class TokenError(Exception):
     """Raised when token operations fail."""

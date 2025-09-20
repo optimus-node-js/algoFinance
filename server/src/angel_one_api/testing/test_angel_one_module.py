@@ -34,12 +34,10 @@ from config.settings import API_KEYS, CLIENT_ID, PASSWORD, TOTP_SECRET
 from core.connections import ConnectionManager
 from angel_one_api.rate_limiter.rate_controller import initialize_rate_controller, get_rate_controller
 
-# Configure logging for testing
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# Import new Angel One logger for testing
+from angel_one_api.logger import get_testing_logger
+
+logger = get_testing_logger("test_angel_one_module")
 
 class AutomatedAngelOneTester:
     """Comprehensive automated testing suite for Angel One module with auto-login."""

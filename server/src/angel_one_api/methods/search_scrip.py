@@ -28,13 +28,14 @@ Rate Limit: STRICTLY ENFORCED 1 req/sec per key
 import asyncio
 import time
 from typing import Dict, List, Optional, Any, Tuple
-import logging
+# Import new Angel One logger
+from ..logger import get_api_logger
 
 # Import our rate limiting system
 from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from ..rate_limiter.api_limits import API_LIMITS
 
-logger = logging.getLogger(__name__)
+logger = get_api_logger("search_scrip")
 
 class SearchScripError(Exception):
     """Raised when instrument search fails."""

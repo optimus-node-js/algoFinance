@@ -8,12 +8,13 @@ Integrates with getCandleData method for comprehensive historical analysis.
 
 import asyncio
 from typing import Dict, List, Optional, Any
-import logging
+# Import new Angel One logger
+from ..logger import get_service_logger
 from datetime import datetime, UTC, timedelta
 
 from ..methods.get_candle_data import get_candle_data
 
-logger = logging.getLogger(__name__)
+logger = get_service_logger("historical_manager")
 
 class HistoricalDataError(Exception):
     """Raised when historical data operations fail."""

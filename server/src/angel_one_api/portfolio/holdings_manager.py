@@ -23,7 +23,6 @@ Author: AI Trading System
 import time
 import asyncio
 from typing import Dict, List, Optional, Any, Tuple
-import logging
 from datetime import datetime, UTC, timedelta
 from dataclasses import dataclass
 from collections import defaultdict
@@ -32,7 +31,10 @@ from collections import defaultdict
 from ..methods.get_holding import get_holding
 from ..methods.get_all_holding import get_all_holding, get_comprehensive_portfolio_analysis
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from ..logger import get_service_logger
+
+logger = get_service_logger("holdings_manager")
 
 class HoldingsError(Exception):
     """Raised when holdings operations fail."""

@@ -23,7 +23,6 @@ Author: AI Trading System
 import time
 import asyncio
 from typing import Dict, List, Optional, Any, Set
-import logging
 from datetime import datetime, UTC, timedelta
 from dataclasses import dataclass
 import json
@@ -32,7 +31,10 @@ import json
 from ..rate_limiter.rate_controller import rate_limited, APIPriority
 from ..methods.get_ltp_data import get_ltp_data, get_bulk_ltp_data
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from ..logger import get_service_logger
+
+logger = get_service_logger("live_feed_manager")
 
 class LiveFeedError(Exception):
     """Raised when live feed operations fail."""

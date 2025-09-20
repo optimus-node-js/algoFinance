@@ -18,12 +18,13 @@ Author: AI Trading System
 
 import asyncio
 from typing import Dict, Optional, Any
-import logging
+# Import new Angel One logger
+from ..logger import get_api_logger
 from datetime import datetime, UTC
 
 from ..rate_limiter.rate_controller import rate_limited, APIPriority
 
-logger = logging.getLogger(__name__)
+logger = get_api_logger("get_market_status")
 
 class MarketStatusError(Exception):
     """Raised when market status check fails."""

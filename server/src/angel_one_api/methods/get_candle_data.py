@@ -37,13 +37,14 @@ import asyncio
 import time
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
-import logging
+# Import new Angel One logger
+from ..logger import get_api_logger
 
 # Import our rate limiting system
 from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from ..rate_limiter.api_limits import API_LIMITS
 
-logger = logging.getLogger(__name__)
+logger = get_api_logger("get_candle_data")
 
 class CandleDataError(Exception):
     """Raised when candle data fetching fails."""

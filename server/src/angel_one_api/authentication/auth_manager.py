@@ -21,14 +21,16 @@ import time
 import asyncio
 import pyotp
 from typing import Dict, Optional, List, Any
-import logging
 from datetime import datetime, UTC, timedelta
 from SmartApi import SmartConnect
 
 # Import our components
 from ..rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 
-logger = logging.getLogger(__name__)
+# Import new Angel One logger
+from ..logger import get_service_logger
+
+logger = get_service_logger("auth_manager")
 
 class AuthenticationError(Exception):
     """Raised when authentication fails."""
@@ -66,7 +68,11 @@ class AuthManager:
                 }
         """
         self._api_keys = api_keys_config.copy()
-        logger.info(f"✅ Configured {len(self._api_keys)} API keys for authentication")
+        logger.info("API keys configured for authentication", {
+            "total_keys": len(self._api_keys),
+            "key_names": list(self._api_keys.keys()),
+            "action": "configuration_complete"
+        })
     
     async def login_all_keys(self) -> Dict[str, bool]:
         """
@@ -86,16 +92,33 @@ class AuthManager:
                 results[key_name] = success
                 
                 if success:
-                    logger.info(f"✅ Authentication successful: {key_name}")
+                    logger.success("Authentication successful", {
+                        "key_name": key_name,
+                        "action": "login_success"
+                    })
                 else:
-                    logger.warning(f"❌ Authentication failed: {key_name}")
+                    logger.warning("Authentication failed", {
+                        "key_name": key_name,
+                        "action": "login_failed"
+                    })
                     
             except Exception as e:
-                logger.error(f"❌ Authentication error for {key_name}: {e}")
+                logger.error("Authentication error", 
+                           error=e, 
+                           error_code="AUTH001",
+                           extra={
+                               "key_name": key_name,
+                               "action": "login_error"
+                           })
                 results[key_name] = False
         
         successful_count = sum(results.values())
-        logger.info(f"🔐 Authentication complete: {successful_count}/{len(self._api_keys)} keys successful")
+        logger.info("Authentication batch complete", {
+            "successful_count": successful_count,
+            "total_keys": len(self._api_keys),
+            "success_rate": f"{(successful_count/len(self._api_keys)*100):.1f}%",
+            "action": "batch_complete"
+        })
         
         return results
     

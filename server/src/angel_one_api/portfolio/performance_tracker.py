@@ -6,10 +6,11 @@ Portfolio performance tracking and historical analysis.
 """
 
 from typing import Dict, List, Any
-import logging
+# Import new Angel One logger
+from ..logger import get_service_logger
 from datetime import datetime, UTC
 
-logger = logging.getLogger(__name__)
+logger = get_service_logger("performance_tracker")
 
 class PerformanceError(Exception):
     """Raised when performance tracking fails."""

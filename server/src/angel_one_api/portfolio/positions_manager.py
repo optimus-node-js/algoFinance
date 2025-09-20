@@ -7,12 +7,13 @@ Enhanced position tracking and management with real-time P&L calculation.
 
 import asyncio
 from typing import Dict, List, Optional, Any
-import logging
+# Import new Angel One logger
+from ..logger import get_service_logger
 from datetime import datetime, UTC
 
 from ..methods.get_position import get_position, get_detailed_positions
 
-logger = logging.getLogger(__name__)
+logger = get_service_logger("positions_manager")
 
 class PositionsError(Exception):
     """Raised when positions operations fail."""

@@ -6,12 +6,13 @@ Fund management and margin tracking.
 """
 
 from typing import Dict, Any
-import logging
+# Import new Angel One logger
+from ..logger import get_service_logger
 from datetime import datetime, UTC
 
 from ..methods.get_rms import get_rms
 
-logger = logging.getLogger(__name__)
+logger = get_service_logger("fund_manager")
 
 class FundError(Exception):
     """Raised when fund operations fail."""

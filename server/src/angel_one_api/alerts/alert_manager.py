@@ -6,10 +6,11 @@ Price and portfolio alerts management.
 """
 
 from typing import Dict, List, Any
-import logging
+# Import new Angel One logger
+from ..logger import get_service_logger
 from datetime import datetime, UTC
 
-logger = logging.getLogger(__name__)
+logger = get_service_logger("alert_manager")
 
 class AlertsError(Exception):
     """Raised when alert operations fail."""

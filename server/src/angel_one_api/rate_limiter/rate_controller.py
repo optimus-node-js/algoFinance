@@ -229,9 +229,12 @@ class AngelOneRateController:
         # Calculate and log total distributed capacity
         total_capacity = self._calculate_distributed_capacity()
         
-        logger.info(f"🚨 Angel One Distributed Rate Controller initialized with {len(api_keys)} API keys")
-        logger.info(f"📊 DISTRIBUTED CAPACITY: {total_capacity}")
-        logger.info(f"🔥 MAXIMUM THROUGHPUT: {sum(total_capacity.values())} requests/second across all methods")
+        logger.info("Angel One Distributed Rate Controller initialized", {
+            "total_api_keys": len(api_keys),
+            "distributed_capacity": total_capacity,
+            "maximum_throughput": sum(total_capacity.values()),
+            "action": "initialization_complete"
+        })
     
     def _calculate_distributed_capacity(self) -> Dict[str, int]:
         """Calculate DISTRIBUTED capacity across ALL API keys for ALL methods."""
@@ -253,7 +256,10 @@ class AngelOneRateController:
             self.emergency_brake_start_time and 
             time.time() - self.emergency_brake_start_time > self.emergency_brake_timeout):
             
-            logger.info(f"🔄 Auto-resetting emergency brake after {self.emergency_brake_timeout}s timeout")
+            logger.info("Auto-resetting emergency brake", {
+                "timeout_seconds": self.emergency_brake_timeout,
+                "action": "emergency_brake_auto_reset"
+            })
             self.reset_emergency_brake()
     
     def _get_key_load_score(self, api_name: str, key_id: str) -> float:
@@ -328,7 +334,12 @@ class AngelOneRateController:
                     response = angel_client.ltpData(...)
         """
         if self.emergency_brake:
-            logger.error(f"🚨 EMERGENCY BRAKE ACTIVE - Blocking {api_name} request")
+            logger.error("Emergency brake active - blocking request", 
+                        error_code="RATE001",
+                        extra={
+                            "api_name": api_name,
+                            "action": "request_blocked"
+                        })
             yield None
             return
         
@@ -356,8 +367,13 @@ class AngelOneRateController:
                         min_wait_time = reset_time
                 
                 distributed_capacity = self._calculate_distributed_capacity().get(api_name, 1)
-                logger.warning(f"⚠️ DISTRIBUTED RATE LIMIT reached for {api_name} across ALL {len(self.api_keys)} keys. "
-                             f"Total capacity: {distributed_capacity} req/sec. Waiting {min_wait_time:.1f}s")
+                logger.warning("Distributed rate limit reached", {
+                    "api_name": api_name,
+                    "total_keys": len(self.api_keys),
+                    "total_capacity": distributed_capacity,
+                    "wait_time_seconds": round(min_wait_time, 1),
+                    "action": "rate_limit_reached"
+                })
                 
                 # For CRITICAL APIs, implement smart waiting with token bucket refill prediction
                 if priority == APIPriority.CRITICAL and min_wait_time < 3.0:
@@ -392,12 +408,25 @@ class AngelOneRateController:
                 self.rate_limit_errors += 1
                 self.consecutive_errors += 1
                 
-                logger.error(f"🚨 Rate limit error for {api_name}: {e}")
+                logger.error("Rate limit error", 
+                            error=e,
+                            error_code="RATE002", 
+                            extra={
+                                "api_name": api_name,
+                                "consecutive_errors": self.consecutive_errors,
+                                "action": "rate_limit_error"
+                            })
                 
                 # Activate emergency brake if too many consecutive errors
                 if self.consecutive_errors >= self.max_consecutive_errors:
                     self.emergency_brake = True
-                    logger.critical(f"🚨 EMERGENCY BRAKE ACTIVATED after {self.consecutive_errors} consecutive rate limit errors")
+                    logger.critical("Emergency brake activated", 
+                                  error_code="RATE003",
+                                  extra={
+                                      "consecutive_errors": self.consecutive_errors,
+                                      "max_allowed": self.max_consecutive_errors,
+                                      "action": "emergency_brake_activated"
+                                  })
             else:
                 # Other error - reset consecutive error count
                 self.consecutive_errors = 0
@@ -454,7 +483,10 @@ class AngelOneRateController:
         """Reset emergency brake (use with caution)."""
         self.emergency_brake = False
         self.consecutive_errors = 0
-        logger.warning("🔄 Emergency brake reset manually")
+        logger.warning("Emergency brake reset manually", {
+            "action": "emergency_brake_manual_reset",
+            "reset_by": "manual_intervention"
+        })
     
     def print_live_dashboard(self):
         """Print live DISTRIBUTED rate limiting dashboard."""
