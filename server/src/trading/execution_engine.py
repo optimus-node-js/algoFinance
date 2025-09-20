@@ -43,7 +43,7 @@ try:
     from core.message_broker import MessageBroker
     from core.connections import ConnectionManager
     from config import settings
-    from logging.enhanced_loguru_logger import get_enhanced_logger, setup_service_logger
+    from log_system.enhanced_loguru_logger import get_enhanced_logger, setup_service_logger
     REAL_COMPONENTS = True
     # Setup enhanced logger for trade execution
     enhanced_logger = get_enhanced_logger()

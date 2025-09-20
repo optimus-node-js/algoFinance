@@ -169,7 +169,7 @@ for logger_name in service_loggers.keys():
 
 # Import existing advanced logger
 try:
-    from logging.advanced_logger import get_logger
+    from log_system.advanced_logger import get_logger
     advanced_logger = get_logger()
     ADVANCED_LOGGER_AVAILABLE = True
 except ImportError:

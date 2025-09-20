@@ -13,7 +13,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 sys.path.append(PROJECT_ROOT)
 
 # Import settings from the centralized config file
-from server.src.config import settings
+from config import settings
 
 class ConnectionManager:
     """
@@ -24,6 +24,7 @@ class ConnectionManager:
     _smartapi_clients = {}  # A dictionary to hold clients for each API key
     _api_key_cycler = None
     _lock = Lock()
+    _angel_one_rate_controller = None
 
     # Define rate limits based on Angel One documentation using the new limiter library
     # Orders: 20 requests/sec, Others: 10 requests/sec
@@ -47,12 +48,46 @@ class ConnectionManager:
             return cls._mongo_client
 
     @classmethod
+    def initialize_angel_one_rate_controller(cls):
+        """Initialize Angel One rate controller with available API keys."""
+        with cls._lock:
+            if cls._angel_one_rate_controller is None:
+                try:
+                    from angel_one_api.rate_limiter.rate_controller import initialize_rate_controller, get_rate_controller
+                    
+                    # Get valid API keys
+                    valid_keys = [v for k, v in settings.API_KEYS.items() if v]
+                    if valid_keys:
+                        cls._angel_one_rate_controller = initialize_rate_controller(valid_keys)
+                        print(f"✅ Angel One rate controller initialized with {len(valid_keys)} API keys")
+                        
+                        # Verify it's working
+                        controller = get_rate_controller()
+                        if controller:
+                            print("✅ Rate controller is now available globally")
+                        else:
+                            print("❌ Rate controller not available globally")
+                    else:
+                        print("⚠️  No valid API keys found for rate controller")
+                except Exception as e:
+                    print(f"❌ Failed to initialize Angel One rate controller: {e}")
+    
+    @classmethod
+    def get_angel_one_rate_controller(cls):
+        """Get the Angel One rate controller instance."""
+        return cls._angel_one_rate_controller
+
+    @classmethod
     def get_smartapi_client(cls):
         """
         Provides a rate-limited SmartAPI client.
         It uses a pool of API keys and rotates them to distribute load.
         """
         with cls._lock:
+            # Initialize rate controller if not already done
+            if cls._angel_one_rate_controller is None:
+                cls.initialize_angel_one_rate_controller()
+            
             if not cls._api_key_cycler:
                 # Filter out keys that are not set in the .env file
                 valid_keys = {k: v for k, v in settings.API_KEYS.items() if v}

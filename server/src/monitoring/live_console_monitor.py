@@ -36,7 +36,7 @@ from rich import box
 
 # Project imports
 try:
-    from logging.advanced_logger import get_logger
+    from log_system.advanced_logger import get_logger
     from core.message_broker import EnhancedMessageBroker
     DEPENDENCIES_AVAILABLE = True
 except ImportError:

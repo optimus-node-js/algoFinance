@@ -30,8 +30,11 @@ import sys
 # Project imports
 try:
     from core.connections import ConnectionManager
+    CONNECTIONS_AVAILABLE = True
     MONGO_AVAILABLE = True
 except ImportError:
+    ConnectionManager = None
+    CONNECTIONS_AVAILABLE = False
     MONGO_AVAILABLE = False
 
 class LogLevel(Enum):
@@ -512,4 +515,9 @@ if __name__ == "__main__":
     print(f"📁 Logs stored in: {logger.log_dir}")
     print(f"📊 MongoDB enabled: {logger.mongodb_enabled}")
 
+# Export the main logger instance
+advanced_logger = AdvancedLogger()
 
+def get_logger():
+    """Get the main advanced logger instance."""
+    return advanced_logger

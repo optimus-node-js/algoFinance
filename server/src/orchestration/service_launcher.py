@@ -36,7 +36,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 sys.path.append(PROJECT_ROOT)
 
 try:
-    from logging.advanced_logger import get_logger
+    from log_system.advanced_logger import get_logger
     from monitoring.live_console_monitor import get_live_monitor
     DEPENDENCIES_AVAILABLE = True
 except ImportError:

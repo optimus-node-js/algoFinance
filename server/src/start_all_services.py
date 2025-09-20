@@ -34,7 +34,7 @@ try:
     from server.src.services.portfolio_management.portfolio_service import PortfolioService
     from server.src.services.order_book.order_book_service import OrderBookService
     from server.src.services.risk_management.risk_service import RiskManagementService
-    from server.src.logging.advanced_logger import advanced_logger
+    from server.src.log_system.advanced_logger import advanced_logger
     SERVICES_AVAILABLE = True
 except ImportError as e:
     print(f"⚠️ Could not import all services: {e}")
