@@ -19,7 +19,7 @@ from models.market import (
     InstrumentSearchRequest, InstrumentSearchResponse,
     MarketStatusResponse
 )
-from methods import get_ltp_data, get_bulk_ltp_data, get_quote, get_candle_data, search_scrip, get_market_status
+from methods import get_ltp_data, get_bulk_ltp_data, get_quote, get_candle_data, search_scrip, get_market_status, get_top_gainers_losers
 from logger import get_api_logger
 from api.dependencies import validate_angel_one_session
 
@@ -150,4 +150,22 @@ async def get_market_status_info(_: bool = Depends(validate_angel_one_session)):
         )
     except Exception as e:
         logger.error("Failed to get market status", error=e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/top-movers")
+async def get_top_movers(_: bool = Depends(validate_angel_one_session)):
+    """📈 Get top gainers and losers"""
+    try:
+        result = await get_top_gainers_losers()
+        
+        return {
+            "success": True,
+            "message": "Top movers retrieved successfully",
+            "gainers": result.get("gainers", []),
+            "losers": result.get("losers", []),
+            "most_active": result.get("most_active", []),
+            "timestamp": result.get("timestamp")
+        }
+    except Exception as e:
+        logger.error("Failed to get top movers", error=e)
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,0 +1,204 @@
+{
+  "type": "record",
+  "name": "RiskEvent",
+  "namespace": "com.hft.risk",
+  "doc": "Risk management event and decision tracking",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique risk event identifier"
+    },
+    {
+      "name": "order_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Related order ID (if applicable)"
+    },
+    {
+      "name": "strategy_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Strategy being evaluated"
+    },
+    {
+      "name": "symbol",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Symbol being evaluated"
+    },
+    {
+      "name": "event_type",
+      "type": {
+        "type": "enum",
+        "name": "RiskEventType",
+        "symbols": [
+          "PRE_TRADE_CHECK",
+          "POSITION_LIMIT_BREACH",
+          "LOSS_LIMIT_BREACH", 
+          "VOLATILITY_LIMIT_BREACH",
+          "CORRELATION_RISK",
+          "CIRCUIT_BREAKER",
+          "EMERGENCY_STOP",
+          "RISK_MODEL_UPDATE"
+        ]
+      },
+      "doc": "Type of risk event"
+    },
+    {
+      "name": "decision",
+      "type": {
+        "type": "enum",
+        "name": "RiskDecision",
+        "symbols": ["APPROVED", "REJECTED", "MODIFIED", "ALERT_ONLY"]
+      },
+      "doc": "Risk management decision"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Risk check timestamp in nanoseconds"
+    },
+    {
+      "name": "processing_latency_ns",
+      "type": "long",
+      "doc": "Risk check processing time in nanoseconds"
+    },
+    {
+      "name": "risk_score",
+      "type": "double",
+      "doc": "Overall risk score (0.0 to 1.0)"
+    },
+    {
+      "name": "risk_factors",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "RiskFactor",
+          "fields": [
+            {"name": "factor_name", "type": "string"},
+            {"name": "value", "type": "double"},
+            {"name": "threshold", "type": "double"},
+            {"name": "severity", "type": {"type": "enum", "name": "Severity", "symbols": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]}}
+          ]
+        }
+      },
+      "default": [],
+      "doc": "Individual risk factors evaluated"
+    },
+    {
+      "name": "position_data",
+      "type": ["null", {
+        "type": "record",
+        "name": "PositionData",
+        "fields": [
+          {"name": "current_position", "type": "long"},
+          {"name": "proposed_position", "type": "long"},
+          {"name": "position_limit", "type": "long"},
+          {"name": "notional_value", "type": "double"},
+          {"name": "notional_limit", "type": "double"}
+        ]
+      }],
+      "default": null,
+      "doc": "Position-related data"
+    },
+    {
+      "name": "pnl_data",
+      "type": ["null", {
+        "type": "record",
+        "name": "PnLData",
+        "fields": [
+          {"name": "unrealized_pnl", "type": "double"},
+          {"name": "realized_pnl_today", "type": "double"},
+          {"name": "daily_loss_limit", "type": "double"},
+          {"name": "max_drawdown", "type": "double"},
+          {"name": "drawdown_limit", "type": "double"}
+        ]
+      }],
+      "default": null,
+      "doc": "P&L and loss limit data"
+    },
+    {
+      "name": "portfolio_metrics",
+      "type": ["null", {
+        "type": "record",
+        "name": "PortfolioMetrics",
+        "fields": [
+          {"name": "var_1day", "type": "double"},
+          {"name": "var_limit", "type": "double"},
+          {"name": "beta", "type": "double"},
+          {"name": "correlation_max", "type": "double"},
+          {"name": "concentration_risk", "type": "double"}
+        ]
+      }],
+      "default": null,
+      "doc": "Portfolio-level risk metrics"
+    },
+    {
+      "name": "market_conditions",
+      "type": ["null", {
+        "type": "record",
+        "name": "MarketConditions",
+        "fields": [
+          {"name": "volatility", "type": "double"},
+          {"name": "liquidity_score", "type": "double"},
+          {"name": "market_stress_indicator", "type": "double"},
+          {"name": "correlation_regime", "type": "string"}
+        ]
+      }],
+      "default": null,
+      "doc": "Current market conditions"
+    },
+    {
+      "name": "rejection_reason",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Detailed rejection reason (if rejected)"
+    },
+    {
+      "name": "modification_details",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Details of risk-based modifications"
+    },
+    {
+      "name": "model_version",
+      "type": "string",
+      "doc": "Risk model version used"
+    },
+    {
+      "name": "override_reason",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Reason for any manual override"
+    },
+    {
+      "name": "override_user",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "User who performed override"
+    },
+    {
+      "name": "circuit_breaker_triggered",
+      "type": "boolean",
+      "default": false,
+      "doc": "Whether this event triggered a circuit breaker"
+    },
+    {
+      "name": "emergency_stop_triggered", 
+      "type": "boolean",
+      "default": false,
+      "doc": "Whether this event triggered emergency stop"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional risk event metadata"
+    }
+  ]
+}

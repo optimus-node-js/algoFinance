@@ -195,3 +195,6 @@ class PositionsResponse(BaseResponse):
         json_encoders = {
             Decimal: lambda v: float(v)
         }
+
+
+

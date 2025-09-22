@@ -14,7 +14,7 @@ from models.portfolio import (
     HoldingsResponse, PositionsResponse,
     PortfolioSummaryResponse, PerformanceResponse
 )
-from methods import get_holding, get_all_holding, get_position
+from methods import get_holding, get_all_holding, get_position, get_rms, batch_margin, get_profile
 from services.portfolio import PortfolioAnalytics, PerformanceTracker
 from logger import get_api_logger
 from api.dependencies import validate_angel_one_session
@@ -114,3 +114,64 @@ async def get_performance_metrics(_: bool = Depends(validate_angel_one_session))
     except Exception as e:
         logger.error("Failed to get performance metrics", error=e)
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/funds")
+async def get_fund_details(_: bool = Depends(validate_angel_one_session)):
+    """💰 Get available funds and limits"""
+    try:
+        result = await get_rms()
+        
+        return {
+            "success": True,
+            "message": "Fund details retrieved successfully",
+            "available_cash": result.get("availablecash", 0),
+            "used_margin": result.get("collateral", 0),
+            "net_available": result.get("net", 0),
+            "margin_used": result.get("utiliseddebits", 0),
+            "total_trading_power": result.get("totaltradingpower", 0),
+            "funds_details": result
+        }
+    except Exception as e:
+        logger.error("Failed to get fund details", error=e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/margins")
+async def calculate_margin_requirements(
+    margin_data: dict,
+    _: bool = Depends(validate_angel_one_session)
+):
+    """🔢 Calculate margin requirements for orders"""
+    try:
+        result = await batch_margin(margin_data)
+        
+        return {
+            "success": True,
+            "message": "Margin calculations completed successfully",
+            "margin_details": result.get("margin_details", []),
+            "total_margin_required": result.get("total_margin", 0),
+            "calculation_timestamp": result.get("timestamp")
+        }
+    except Exception as e:
+        logger.error("Failed to calculate margins", error=e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/profile")
+async def get_user_profile(_: bool = Depends(validate_angel_one_session)):
+    """👤 Get user profile information"""
+    try:
+        result = await get_profile()
+        
+        return {
+            "success": True,
+            "message": "User profile retrieved successfully",
+            "profile": result.get("profile"),
+            "account_details": result.get("account_details"),
+            "trading_preferences": result.get("trading_preferences"),
+            "limits": result.get("limits"),
+            "timestamp": result.get("timestamp")
+        }
+    except Exception as e:
+        logger.error("Failed to get user profile", error=e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+

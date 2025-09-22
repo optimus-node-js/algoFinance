@@ -175,3 +175,6 @@ def validate_message(message_data: Dict[str, Any], expected_type: MessageType) -
     
     schema_class = schema_map.get(expected_type, BaseMessage)
     return schema_class(**message_data)
+
+
+

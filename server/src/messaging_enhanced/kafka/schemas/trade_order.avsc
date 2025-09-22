@@ -1,0 +1,149 @@
+{
+  "type": "record",
+  "name": "TradeOrder",
+  "namespace": "com.hft.trading",
+  "doc": "Trading order with complete execution tracking",
+  "fields": [
+    {
+      "name": "order_id",
+      "type": "string",
+      "doc": "Unique order identifier"
+    },
+    {
+      "name": "parent_order_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Parent order ID for sliced orders"
+    },
+    {
+      "name": "strategy_id",
+      "type": "string",
+      "doc": "Strategy that generated this order"
+    },
+    {
+      "name": "symbol",
+      "type": "string",
+      "doc": "Trading symbol"
+    },
+    {
+      "name": "exchange",
+      "type": "string",
+      "doc": "Exchange identifier"
+    },
+    {
+      "name": "side",
+      "type": {
+        "type": "enum",
+        "name": "OrderSide",
+        "symbols": ["BUY", "SELL"]
+      },
+      "doc": "Order side"
+    },
+    {
+      "name": "quantity",
+      "type": "long",
+      "doc": "Order quantity"
+    },
+    {
+      "name": "price",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Order price (null for market orders)"
+    },
+    {
+      "name": "order_type",
+      "type": {
+        "type": "enum",
+        "name": "OrderType",
+        "symbols": ["MARKET", "LIMIT", "STOP", "STOP_LIMIT", "IOC", "GTD", "GTC"]
+      },
+      "doc": "Order type"
+    },
+    {
+      "name": "product_type",
+      "type": {
+        "type": "enum",
+        "name": "ProductType", 
+        "symbols": ["INTRADAY", "DELIVERY", "CO", "BO"]
+      },
+      "doc": "Product type for order"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Order creation timestamp in nanoseconds"
+    },
+    {
+      "name": "risk_approved",
+      "type": "boolean",
+      "doc": "Whether order passed risk checks"
+    },
+    {
+      "name": "risk_check_timestamp",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Risk check completion timestamp"
+    },
+    {
+      "name": "execution_venue",
+      "type": "string",
+      "default": "angel_one",
+      "doc": "Execution venue/broker"
+    },
+    {
+      "name": "order_status",
+      "type": {
+        "type": "enum",
+        "name": "OrderStatus",
+        "symbols": ["PENDING", "SUBMITTED", "PARTIALLY_FILLED", "FILLED", "CANCELLED", "REJECTED"]
+      },
+      "default": "PENDING",
+      "doc": "Current order status"
+    },
+    {
+      "name": "filled_quantity",
+      "type": "long",
+      "default": 0,
+      "doc": "Quantity filled so far"
+    },
+    {
+      "name": "average_price",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Average fill price"
+    },
+    {
+      "name": "commission",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Commission charged"
+    },
+    {
+      "name": "slippage",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Execution slippage"
+    },
+    {
+      "name": "execution_latency_ns",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Execution latency in nanoseconds"
+    },
+    {
+      "name": "broker_order_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Broker's order ID"
+    },
+    {
+      "name": "tags",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional order tags/metadata"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "type": "record",
+  "name": "SentimentSignal",
+  "namespace": "com.hft.sentiment",
+  "doc": "Sentiment signal from news and social media analysis",
+  "fields": [
+    {
+      "name": "signal_id",
+      "type": "string",
+      "doc": "Unique signal identifier"
+    },
+    {
+      "name": "symbol",
+      "type": "string",
+      "doc": "Trading symbol this sentiment relates to"
+    },
+    {
+      "name": "sentiment_score",
+      "type": "double",
+      "doc": "Sentiment score (-1.0 to +1.0, negative=bearish, positive=bullish)"
+    },
+    {
+      "name": "confidence",
+      "type": "double",
+      "doc": "Confidence score (0.0 to 1.0)"
+    },
+    {
+      "name": "strength",
+      "type": {
+        "type": "enum",
+        "name": "SentimentStrength",
+        "symbols": ["WEAK", "MODERATE", "STRONG", "VERY_STRONG"]
+      },
+      "doc": "Signal strength categorization"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "doc": "Data source (newsapi, twitter, reddit, etc.)"
+    },
+    {
+      "name": "source_url",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "URL of the source content"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Signal generation timestamp in nanoseconds"
+    },
+    {
+      "name": "content_timestamp",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Original content publication timestamp"
+    },
+    {
+      "name": "news_headline",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "News headline (if applicable)"
+    },
+    {
+      "name": "news_summary",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "News summary or excerpt"
+    },
+    {
+      "name": "social_mentions",
+      "type": "int",
+      "default": 0,
+      "doc": "Number of social media mentions"
+    },
+    {
+      "name": "volume_trend",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Volume of mentions compared to baseline"
+    },
+    {
+      "name": "keywords",
+      "type": {
+        "type": "array",
+        "items": "string"
+      },
+      "default": [],
+      "doc": "Key words/phrases that triggered the signal"
+    },
+    {
+      "name": "entities",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "Entity",
+          "fields": [
+            {"name": "text", "type": "string"},
+            {"name": "type", "type": "string"},
+            {"name": "confidence", "type": "double"}
+          ]
+        }
+      },
+      "default": [],
+      "doc": "Named entities extracted from content"
+    },
+    {
+      "name": "provenance",
+      "type": "string",
+      "doc": "Data lineage and processing pipeline info"
+    },
+    {
+      "name": "model_version",
+      "type": "string",
+      "doc": "Version of sentiment model used"
+    },
+    {
+      "name": "processing_latency_ms",
+      "type": "long",
+      "doc": "Processing latency in milliseconds"
+    },
+    {
+      "name": "market_hours",
+      "type": "boolean",
+      "doc": "Whether signal was generated during market hours"
+    },
+    {
+      "name": "expiry_timestamp",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "When this signal should be considered stale"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional metadata"
+    }
+  ]
+}

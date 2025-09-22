@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="86ea4a35-6808-4f45-a0b9-34eee183ec2f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Finance Server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Finance Server.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ARCHITECTURE_REORGANIZATION_PLAN.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/INSTRUMENT_SERVICE_ANALYSIS.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/2025-07-13/app.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/2025-07-19/app.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/2025-09-13/app.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/2025-09-17/app.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/2025-09-20/app.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orchestration/health_check.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orchestration/service_config.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orchestration/start_all_services.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orchestration/start_data_stack.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orchestration/start_trading_stack.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/angel_one_api/memory-bank/fastApiImplementationPlan.md" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/angel_one_api/memory-bank/fastApiImplementationPlan.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/angel_one_api/memory-bank/microserviceArchitecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/angel_one_api/memory-bank/microserviceArchitecture.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/exceptions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/middleware.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/middleware.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/advanced.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/advanced.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/authentication.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/authentication.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/health.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/health.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/market_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/market_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/portfolio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/trading.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/trading.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/websockets.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/api/routers/websockets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/auth/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/auth/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/auth/jwt.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/auth/jwt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/config/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/database/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/database/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/database/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/database/connection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/database/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/database/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/docs/COMPLETE_IMPLEMENTATION_SUMMARY.md" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/docs/COMPLETE_IMPLEMENTATION_SUMMARY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/docs/PHASE_1_COMPLETION_SUMMARY.md" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/docs/PHASE_1_COMPLETION_SUMMARY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/angel_one_main.log" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/angel_one_main.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/errors/database_failures.log" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/errors/database_failures.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/infrastructure/fastapi_main.log" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/infrastructure/fastapi_main.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/logger/scope_loggers.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/logger/scope_loggers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/messaging/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/messaging/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/messaging/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/messaging/connection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/messaging/consumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/messaging/consumer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/messaging/publisher.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/messaging/publisher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/messaging/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/messaging/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/search_scrip.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/search_scrip.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/models/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/models/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/models/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/models/market.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/models/market.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/models/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/models/portfolio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/models/risk.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/models/risk.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/models/trading.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/models/trading.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/run_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/run_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/services/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/services/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/services/alerts.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/services/alerts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/services/authentication/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/services/authentication/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/services/authentication/auth_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/services/authentication/auth_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/services/portfolio.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/services/portfolio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/api_gateway/auth.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/api_gateway/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/backtesting/runner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/config/settings.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/data_ingestion/historical.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/data_ingestion/logs/2025-07-13/app.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/data_ingestion/stream.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/database/connect.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/advanced_logger.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/enhanced_loguru_logger.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/2025-09-14_trading.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/ai_master/2025-09-14_ai_master.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/ai_master/2025-09-15_ai_master.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/ai_master/2025-09-17_ai_master.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/backtesting/2025-09-14_backtesting.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/market_data/2025-09-14_market_data.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/message_broker/2025-09-14_message_broker.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/order_manager/2025-09-14_order_manager.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/pattern_recognition/2025-09-14_pattern_recognition.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/portfolio_manager/2025-09-14_portfolio_manager.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/risk_management/2025-09-14_risk_management.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/stock_discovery/2025-09-14_stock_discovery.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/strategy_engine/2025-09-14_strategy_engine.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/system/2025-09-14_system.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/technical_indicators/2025-09-14_technical_indicators.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/trade_execution/2025-09-14_trade_execution.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/logs/volatility_analyzer/2025-09-14_volatility_analyzer.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/log_system/progress_tracker.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/logging/logs/2025-09-17_trading.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/monitoring/live_console_monitor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/orchestration/service_launcher.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/order_management/logs/2025-07-13/app.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/order_management/oms.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/market_data/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/market_data/market_data_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/order_book/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/order_book/order_book_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/portfolio_management/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/portfolio_management/portfolio_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/risk_management/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/risk_management/risk_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/stock_discovery/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/services/stock_discovery/stock_discovery_service.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/start_ai_trading_system.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/start_all_services.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/testing/rabbitmq_receiver.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/testing/rabbitmq_sender.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/testing/test_rabbitmq_connection.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/trading/execution_engine.py" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="332lEh5jXLWIDSxcSnpliDDJOJX" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.178" />
+        <option value="bundled-python-sdk-ce6832f46686-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.178" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="86ea4a35-6808-4f45-a0b9-34eee183ec2f" name="Changes" comment="" />
+      <created>1758522953842</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1758522953842</updated>
+      <workItem from="1758522958969" duration="1588000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

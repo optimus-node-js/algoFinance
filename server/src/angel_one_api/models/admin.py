@@ -179,3 +179,6 @@ class CacheStatsResponse(BaseResponse):
     """Cache statistics response."""
     
     stats: CacheStats = Field(..., description="Cache statistics")
+
+
+

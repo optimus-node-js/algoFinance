@@ -1,0 +1,116 @@
+{
+  "type": "record",
+  "name": "MarketTick",
+  "namespace": "com.hft.market",
+  "doc": "Market tick data with ultra-low latency tracking",
+  "fields": [
+    {
+      "name": "symbol",
+      "type": "string",
+      "doc": "Trading symbol (e.g., RELIANCE, TCS)"
+    },
+    {
+      "name": "exchange",
+      "type": "string",
+      "doc": "Exchange identifier (NSE, BSE)"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Exchange timestamp in nanoseconds since epoch"
+    },
+    {
+      "name": "system_timestamp",
+      "type": "long",
+      "doc": "System receive timestamp in nanoseconds"
+    },
+    {
+      "name": "price",
+      "type": "double",
+      "doc": "Last traded price"
+    },
+    {
+      "name": "volume",
+      "type": "long",
+      "doc": "Trade volume"
+    },
+    {
+      "name": "bid",
+      "type": "double",
+      "doc": "Best bid price"
+    },
+    {
+      "name": "ask",
+      "type": "double",
+      "doc": "Best ask price"
+    },
+    {
+      "name": "bid_size",
+      "type": "long",
+      "doc": "Best bid quantity"
+    },
+    {
+      "name": "ask_size",
+      "type": "long",
+      "doc": "Best ask quantity"
+    },
+    {
+      "name": "open",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Day open price"
+    },
+    {
+      "name": "high",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Day high price"
+    },
+    {
+      "name": "low",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Day low price"
+    },
+    {
+      "name": "close",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Previous day close price"
+    },
+    {
+      "name": "change",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Price change from previous close"
+    },
+    {
+      "name": "change_percent",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Percentage change from previous close"
+    },
+    {
+      "name": "total_volume",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Total day volume"
+    },
+    {
+      "name": "feed_latency_ns",
+      "type": "long",
+      "doc": "Feed latency in nanoseconds (system_timestamp - timestamp)"
+    },
+    {
+      "name": "sequence_number",
+      "type": "long",
+      "doc": "Message sequence number for ordering"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "default": "angel_one",
+      "doc": "Data source identifier"
+    }
+  ]
+}

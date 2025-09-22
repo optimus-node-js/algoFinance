@@ -60,3 +60,6 @@ class HealthCheck(Base):
     total_components = Column(Integer)
     system_metrics = Column(JSON)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+

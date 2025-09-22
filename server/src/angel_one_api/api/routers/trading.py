@@ -18,7 +18,7 @@ from models.trading import (
     CancelOrderResponse, OrderBookResponse,
     TradeBookResponse, PositionsResponse
 )
-from methods import place_order, modify_order, cancel_order, get_order_book, get_trade_book, get_position
+from methods import place_order, modify_order, cancel_order, get_order_book, get_trade_book, get_position, convert_position, order_details
 from logger import get_api_logger
 from api.dependencies import validate_angel_one_session
 
@@ -145,4 +145,50 @@ async def get_positions_data(_: bool = Depends(validate_angel_one_session)):
         )
     except Exception as e:
         logger.error("Failed to get positions", error=e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/positions/convert")
+async def convert_trading_position(
+    position_data: dict,
+    _: bool = Depends(validate_angel_one_session)
+):
+    """🔄 Convert position between delivery and intraday"""
+    try:
+        result = await convert_position(
+            symbol=position_data.get("symbol"),
+            exchange=position_data.get("exchange"),
+            transaction_type=position_data.get("transaction_type"),
+            position_type=position_data.get("position_type"),
+            quantity=position_data.get("quantity"),
+            old_product=position_data.get("old_product"),
+            new_product=position_data.get("new_product")
+        )
+        
+        return {
+            "success": True,
+            "message": "Position converted successfully",
+            "conversion_id": result.get("conversion_id"),
+            "status": result.get("status")
+        }
+    except Exception as e:
+        logger.error("Position conversion failed", error=e)
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/orders/{order_id}/details")
+async def get_order_details(
+    order_id: str,
+    _: bool = Depends(validate_angel_one_session)
+):
+    """📋 Get detailed order information"""
+    try:
+        result = await order_details(order_id=order_id)
+        
+        return {
+            "success": True,
+            "message": "Order details retrieved successfully",
+            "order_details": result.get("order_details"),
+            "order_id": order_id
+        }
+    except Exception as e:
+        logger.error("Failed to get order details", error=e)
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,0 +1,192 @@
+{
+  "type": "record",
+  "name": "ExecutionEvent",
+  "namespace": "com.hft.execution",
+  "doc": "Trade execution event with complete fill details",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique event identifier"
+    },
+    {
+      "name": "order_id",
+      "type": "string",
+      "doc": "Related order identifier"
+    },
+    {
+      "name": "execution_id",
+      "type": "string",
+      "doc": "Unique execution identifier"
+    },
+    {
+      "name": "symbol",
+      "type": "string",
+      "doc": "Trading symbol"
+    },
+    {
+      "name": "exchange",
+      "type": "string",
+      "doc": "Exchange identifier"
+    },
+    {
+      "name": "side",
+      "type": {
+        "type": "enum",
+        "name": "ExecutionSide",
+        "symbols": ["BUY", "SELL"]
+      },
+      "doc": "Execution side"
+    },
+    {
+      "name": "quantity",
+      "type": "long",
+      "doc": "Executed quantity"
+    },
+    {
+      "name": "price",
+      "type": "double",
+      "doc": "Execution price"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Execution timestamp in nanoseconds"
+    },
+    {
+      "name": "venue_timestamp",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Venue reported execution timestamp"
+    },
+    {
+      "name": "execution_type",
+      "type": {
+        "type": "enum",
+        "name": "ExecutionType",
+        "symbols": ["FULL", "PARTIAL", "CORRECTION", "CANCEL", "REJECT"]
+      },
+      "doc": "Type of execution event"
+    },
+    {
+      "name": "liquidity",
+      "type": {
+        "type": "enum",
+        "name": "LiquidityType",
+        "symbols": ["MAKER", "TAKER", "UNKNOWN"]
+      },
+      "default": "UNKNOWN",
+      "doc": "Liquidity provision type"
+    },
+    {
+      "name": "commission",
+      "type": "double",
+      "default": 0.0,
+      "doc": "Commission charged for this execution"
+    },
+    {
+      "name": "fees",
+      "type": "double",
+      "default": 0.0,
+      "doc": "Additional fees"
+    },
+    {
+      "name": "net_amount",
+      "type": "double",
+      "doc": "Net amount (price * quantity - commission - fees)"
+    },
+    {
+      "name": "cumulative_quantity",
+      "type": "long",
+      "doc": "Cumulative filled quantity for the order"
+    },
+    {
+      "name": "remaining_quantity",
+      "type": "long",
+      "doc": "Remaining unfilled quantity"
+    },
+    {
+      "name": "average_price",
+      "type": "double",
+      "doc": "Average fill price so far"
+    },
+    {
+      "name": "order_status",
+      "type": {
+        "type": "enum",
+        "name": "OrderStatusExec",
+        "symbols": ["PARTIALLY_FILLED", "FILLED", "CANCELLED", "REJECTED"]
+      },
+      "doc": "Order status after this execution"
+    },
+    {
+      "name": "execution_venue",
+      "type": "string",
+      "default": "angel_one",
+      "doc": "Execution venue"
+    },
+    {
+      "name": "venue_order_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Venue's order identifier"
+    },
+    {
+      "name": "venue_execution_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Venue's execution identifier"
+    },
+    {
+      "name": "market_data_snapshot",
+      "type": ["null", {
+        "type": "record",
+        "name": "MarketSnapshot",
+        "fields": [
+          {"name": "bid", "type": "double"},
+          {"name": "ask", "type": "double"},
+          {"name": "last", "type": "double"},
+          {"name": "volume", "type": "long"}
+        ]
+      }],
+      "default": null,
+      "doc": "Market data at execution time"
+    },
+    {
+      "name": "slippage",
+      "type": "double",
+      "default": 0.0,
+      "doc": "Execution slippage from expected price"
+    },
+    {
+      "name": "latency_breakdown",
+      "type": ["null", {
+        "type": "record",
+        "name": "LatencyBreakdown",
+        "fields": [
+          {"name": "order_to_venue_ns", "type": "long"},
+          {"name": "venue_processing_ns", "type": "long"},
+          {"name": "venue_to_confirm_ns", "type": "long"},
+          {"name": "total_latency_ns", "type": "long"}
+        ]
+      }],
+      "default": null,
+      "doc": "Detailed latency breakdown"
+    },
+    {
+      "name": "strategy_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Strategy that originated this order"
+    },
+    {
+      "name": "tags",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional execution metadata"
+    }
+  ]
+}
