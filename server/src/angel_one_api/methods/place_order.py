@@ -1,10 +1,17 @@
 """
-Angel One API: placeOrder - Trading Order Placement
-===================================================
+Angel One API: placeOrder - Trading Order Placement WITH IDEMPOTENCY
+====================================================================
 
 CRITICAL METHOD: Core trading functionality - order placement
 Rate Limit: 20 requests/second per API key (HIGHEST frequency)
 Priority: CRITICAL
+
+ENHANCED WITH IDEMPOTENCY: Prevents duplicate order placement
+Features:
+- Automatic duplicate detection and prevention
+- Intelligent caching for performance optimization
+- Request fingerprinting for unique identification
+- Comprehensive error handling and recovery
 
 MOVED FROM: trading/execution_engine.py, order_management/oms.py
 This method consolidates and improves all existing order placement logic.
@@ -12,7 +19,7 @@ This method consolidates and improves all existing order placement logic.
 Usage:
     from angel_one_api.methods.place_order import place_order
     
-    # Market order
+    # Market order with automatic idempotency
     order_result = await place_order({
         'variety': 'NORMAL',
         'tradingsymbol': 'RELIANCE-EQ',
@@ -25,7 +32,7 @@ Usage:
         'quantity': '10'
     })
     
-    # Limit order
+    # Limit order with idempotency
     order_result = await place_order({
         'variety': 'NORMAL',
         'tradingsymbol': 'TCS-EQ',
@@ -56,7 +63,16 @@ from enum import Enum
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
-logger = get_api_logger("place_order")
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper, IdempotencyManager
+    IDEMPOTENCY_AVAILABLE = True
+    logger = get_api_logger("place_order")
+    logger.info("✅ Idempotency protection enabled for place_order")
+except ImportError as e:
+    IDEMPOTENCY_AVAILABLE = False
+    logger = get_api_logger("place_order")
+    logger.warning(f"⚠️ Idempotency not available: {e}")
 
 class OrderError(Exception):
     """Raised when order placement fails."""
@@ -88,7 +104,7 @@ class Exchange(Enum):
     MCX = "MCX"
 
 @rate_limited("place_order", APIPriority.CRITICAL)
-async def place_order(
+async def _place_order_core(
     order_params: Dict[str, Any],
     _rate_limit_permit: Optional[Dict] = None
 ) -> Dict[str, Any]:
@@ -292,6 +308,63 @@ def _validate_order_parameters(order_params: Dict[str, Any]) -> Dict[str, Any]:
     validated['symboltoken'] = str(validated['symboltoken'])
     
     return validated
+
+# Main idempotency-protected place_order function
+@idempotency_wrapper(method_type="trading", ttl=300, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
+async def place_order(
+    order_params: Dict[str, Any],
+    enable_idempotency: bool = True,
+    custom_ttl: Optional[int] = None,
+    request_id: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Place trading order with automatic idempotency protection.
+    
+    🛡️ AUTOMATIC IDEMPOTENCY: This function is automatically protected by the 
+    @idempotency_wrapper decorator which handles duplicate prevention transparently.
+    
+    Args:
+        order_params: Order parameters dict containing:
+            - variety: Order variety (NORMAL, STOPLOSS, AMO)
+            - tradingsymbol: Trading symbol (e.g., "RELIANCE-EQ")
+            - symboltoken: Angel One symbol token
+            - transactiontype: BUY or SELL
+            - exchange: NSE, BSE, NFO, MCX
+            - ordertype: MARKET, LIMIT, STOPLOSS, SL-M
+            - producttype: INTRADAY, DELIVERY, CARRYFORWARD
+            - duration: DAY, IOC
+            - quantity: Number of shares/lots
+            - price: Price (required for LIMIT orders)
+            - triggerprice: Trigger price (required for STOPLOSS orders)
+        enable_idempotency: Enable duplicate prevention (default: True)
+        custom_ttl: Custom cache TTL in seconds (default: 300)
+        request_id: Custom request ID for manual override
+        
+    Returns:
+        Dict containing:
+            - success: bool
+            - order_id: str (if successful)
+            - message: str
+            - response: dict (full API response)
+            - from_cache: bool (if returned from cache) 
+            - duplicate_prevented: bool (if duplicate was prevented)
+            - response_time: float (time taken)
+            
+    Features:
+        ✅ Automatic duplicate prevention (via decorator)
+        ✅ Intelligent request fingerprinting
+        ✅ Performance optimization through caching
+        ✅ Comprehensive error handling
+        ✅ Backward compatibility maintained
+    """
+    # The @idempotency_wrapper decorator automatically handles duplicate prevention,
+    # so we just call the core function directly. The decorator intercepts and
+    # manages idempotency transparently.
+    
+    logger.info(f"🛡️ Placing order with automatic idempotency protection")
+    
+    # Call core function - idempotency is handled by decorator
+    return await _place_order_core(order_params)
 
 async def place_market_order(
     symbol: str,

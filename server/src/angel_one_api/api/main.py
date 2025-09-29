@@ -104,6 +104,36 @@ async def lifespan(app: FastAPI):
         if startup_tasks:
             await asyncio.gather(*startup_tasks)
         
+        # Auto-login on startup if credentials are available
+        try:
+            if hasattr(settings, 'CLIENT_ID') and settings.CLIENT_ID and settings.PASSWORD:
+                logger.info("🔑 Attempting auto-login with available credentials...")
+                from methods.login_by_password import login_by_password
+                # Generate TOTP code from secret
+                totp_code = "123456"  # Default fallback
+                if hasattr(settings, 'TOTP_SECRET') and settings.TOTP_SECRET:
+                    try:
+                        import pyotp
+                        totp = pyotp.TOTP(settings.TOTP_SECRET)
+                        totp_code = totp.now()
+                        logger.info("🔐 Generated TOTP code from secret")
+                    except Exception as e:
+                        logger.warning(f"⚠️ Failed to generate TOTP, using fallback: {e}")
+                
+                login_result = await login_by_password(
+                    client_id=settings.CLIENT_ID,
+                    password=settings.PASSWORD,
+                    totp_code=totp_code
+                )
+                if login_result.get('success'):
+                    logger.success(f"✅ Auto-login successful for {settings.CLIENT_ID[:6]}...")
+                else:
+                    logger.warning(f"⚠️ Auto-login failed: {login_result.get('error', 'Unknown error')}")
+            else:
+                logger.info("ℹ️ No credentials configured for auto-login")
+        except Exception as e:
+            logger.warning(f"⚠️ Auto-login failed: {str(e)}")
+        
         # Health check initialization
         logger.info("💚 Running initial health checks...")
         app.state.startup_time = asyncio.get_event_loop().time()

@@ -27,12 +27,20 @@ from datetime import datetime, UTC
 
 from rate_limiter.rate_controller import rate_limited, APIPriority
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("get_market_status")
 
 class MarketStatusError(Exception):
     """Raised when market status check fails."""
     pass
 
+@idempotency_wrapper(method_type="market", ttl=120, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("get_market_status", APIPriority.MEDIUM)
 async def get_market_status(_rate_limit_permit: Optional[Dict] = None) -> Dict[str, Any]:
     """

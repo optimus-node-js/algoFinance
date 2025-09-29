@@ -32,12 +32,20 @@ from datetime import datetime, UTC
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("get_profile")
 
 class ProfileError(Exception):
     """Raised when profile data fetching fails."""
     pass
 
+@idempotency_wrapper(method_type="account", ttl=300, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("get_profile", APIPriority.MEDIUM)
 async def get_profile(_rate_limit_permit: Optional[Dict] = None) -> Dict[str, Any]:
     """

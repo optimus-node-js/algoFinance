@@ -32,12 +32,20 @@ from datetime import datetime, UTC, timedelta
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("generate_tokens")
 
 class TokenGenerationError(Exception):
     """Raised when token generation fails."""
     pass
 
+@idempotency_wrapper(method_type="auth", ttl=600, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("generate_tokens", APIPriority.MEDIUM)
 async def generate_tokens(
     refresh_token: str,

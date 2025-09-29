@@ -40,9 +40,9 @@ from typing import Dict, List, Optional, Any, Union
 from datetime import datetime, UTC
 
 # Import our modules
-from .authentication import AuthManager, SessionManager, TokenManager
-from .market_data import LiveFeedManager, InstrumentManager
-from .methods import (
+from angel_one_api.authentication import AuthManager, SessionManager, TokenManager
+from angel_one_api.market_data import LiveFeedManager, InstrumentManager
+from angel_one_api.methods import (
     # Core trading methods
     place_order, modify_order, cancel_order,
     get_order_book, get_trade_book, order_details,
@@ -60,7 +60,7 @@ from .methods import (
 )
 
 # Import new Angel One logger
-from .logger import get_infrastructure_logger
+from angel_one_api.logger import get_infrastructure_logger
 
 logger = get_infrastructure_logger("interface")
 

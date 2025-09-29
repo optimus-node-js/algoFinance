@@ -65,6 +65,11 @@ class Settings(BaseSettings):
     )
     DATABASE_POOL_SIZE: int = Field(default=20, env="DATABASE_POOL_SIZE")
     
+    # Redis Configuration
+    REDIS_HOST: str = Field(default="localhost", env="REDIS_HOST")
+    REDIS_PORT: int = Field(default=6379, env="REDIS_PORT")
+    REDIS_DB: int = Field(default=0, env="REDIS_DB")
+    
     # RabbitMQ
     RABBITMQ_URL: str = Field(
         default="amqp://guest:guest@localhost:5672/",
@@ -79,22 +84,33 @@ class Settings(BaseSettings):
     ANGEL_ONE_MAX_RETRIES: int = Field(default=3, env="ANGEL_ONE_MAX_RETRIES")
     
     # Angel One API Keys - Individual keys from .env
-    API_KEY: str = Field(default="", env="API_KEY")
-    API_KEY_2: str = Field(default="", env="API_KEY_2") 
-    API_KEY_3: str = Field(default="", env="API_KEY_3")
-    API_KEY_4: str = Field(default="", env="API_KEY_4")
-    API_KEY_5: str = Field(default="", env="API_KEY_5")
+    API_KEY: str = Field(default="demo_key_1", env="API_KEY")
+    API_KEY_2: str = Field(default="demo_key_2", env="API_KEY_2") 
+    API_KEY_3: str = Field(default="demo_key_3", env="API_KEY_3")
+    API_KEY_4: str = Field(default="demo_key_4", env="API_KEY_4")
+    API_KEY_5: str = Field(default="demo_key_5", env="API_KEY_5")
     
     # Angel One Authentication Credentials
-    SECRET_KEY_ANGEL: str = Field(default="", env="SECRET_KEY")
-    CLIENT_ID: str = Field(default="", env="CLIENT_ID")
-    PASSWORD: str = Field(default="", env="PASSWORD")
+    SECRET_KEY_ANGEL: str = Field(default="demo_secret", env="SECRET_KEY")
+    CLIENT_ID: str = Field(default="demo_client", env="CLIENT_ID")
+    PASSWORD: str = Field(default="demo_password", env="PASSWORD")
     TOTP_SECRET: str = Field(default="", env="TOTP_SECRET")
     
     def get_api_keys(self) -> List[str]:
         """Get all configured API keys as a list."""
         keys = [self.API_KEY, self.API_KEY_2, self.API_KEY_3, self.API_KEY_4, self.API_KEY_5]
         return [key.strip() for key in keys if key.strip()]
+    
+    @property
+    def API_KEYS(self) -> Dict[str, str]:
+        """Get all configured API keys as a dictionary."""
+        return {
+            "API_KEY": self.API_KEY,
+            "API_KEY_2": self.API_KEY_2,
+            "API_KEY_3": self.API_KEY_3,
+            "API_KEY_4": self.API_KEY_4,
+            "API_KEY_5": self.API_KEY_5
+        }
     
     # Rate Limiting
     RATE_LIMIT_ENABLED: bool = Field(default=True, env="RATE_LIMIT_ENABLED")

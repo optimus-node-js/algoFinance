@@ -37,12 +37,20 @@ from datetime import datetime, UTC
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("convert_position")
 
 class ConvertPositionError(Exception):
     """Raised when position conversion fails."""
     pass
 
+@idempotency_wrapper(method_type="trading", ttl=300, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("convert_position", APIPriority.MEDIUM)
 async def convert_position(
     exchange: str,

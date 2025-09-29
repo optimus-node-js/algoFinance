@@ -22,10 +22,10 @@ Usage:
     ltp = await feed_manager.get_ltp("RELIANCE", "2885")
 """
 
-from .live_feed_manager import LiveFeedManager, LiveFeedError
-from .historical_manager import HistoricalManager, HistoricalDataError
-from .instrument_manager import InstrumentManager, InstrumentError
-from .quote_manager import QuoteManager, QuoteError
+from angel_one_api.market_data.live_feed_manager import LiveFeedManager, LiveFeedError
+from angel_one_api.market_data.historical_manager import HistoricalManager, HistoricalDataError
+from angel_one_api.market_data.instrument_manager import InstrumentManager, InstrumentError
+from angel_one_api.market_data.quote_manager import QuoteManager, QuoteError
 
 __all__ = [
     'LiveFeedManager',

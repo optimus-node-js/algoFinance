@@ -35,12 +35,23 @@ import pyotp
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from angel_one_api.enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
+# Re-enable idempotency now that imports are fixed
+# IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("login_by_password")
 
 class AuthenticationError(Exception):
     """Raised when authentication fails."""
     pass
 
+@idempotency_wrapper(method_type="auth", ttl=900, cache_response=False) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("login_by_password", APIPriority.CRITICAL)
 async def login_by_password(
     client_id: str,
@@ -71,28 +82,22 @@ async def login_by_password(
             raise AuthenticationError("No rate limit permit - internal error")
         
         # Get Angel One client for authentication
-        from SmartApi.smartConnect import SmartConnect
-        # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from SmartApi import SmartConnect
         
         # Get API key from the permit (rate controller selected the best key)
         api_key_id = _rate_limit_permit['api_key_id']
         
         # Get the actual API key from settings
-        from config import settings
-        api_keys_map = settings.API_KEYS
+        from angel_one_api.config import settings
         
-        # Find the actual API key value
-        api_key = None
-        for key_name, key_value in api_keys_map.items():
-            if f"key_{list(api_keys_map.keys()).index(key_name) + 1}" == api_key_id:
-                api_key = key_value
-                break
+        # The rate controller passes the actual API key value as api_key_id
+        # (truncated for display but full value for use)
+        api_key = api_key_id
         
-        if not api_key:
-            raise AuthenticationError(f"API key not found for {api_key_id}")
+        # Validate that this is one of our configured keys
+        all_keys = settings.get_api_keys()
+        if not any(key.startswith(api_key_id[:8]) for key in all_keys):
+            raise AuthenticationError(f"API key not recognized: {api_key_id[:8]}...")
         
         # Validate inputs
         if not all([client_id, password, totp_code]):
@@ -170,7 +175,7 @@ async def auto_login() -> Dict[str, Any]:
     """
     try:
         # Import settings
-        from config import settings
+        from angel_one_api.config import settings
         import pyotp
         
         # Validate all required credentials are available

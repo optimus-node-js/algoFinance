@@ -429,6 +429,27 @@ class OrderProducer:
         except Exception as e:
             logger.error(f"Error flushing OrderProducer: {e}")
     
+    async def publish(self, topic: str, payload: Dict[str, Any], schema_name: Optional[str] = None):
+        """Simple publish method for risk events."""
+        try:
+            if schema_name and hasattr(self.schema_registry, 'serialize'):
+                serialized = self.schema_registry.serialize(schema_name, payload)
+            else:
+                import json
+                serialized = json.dumps(payload).encode('utf-8')
+            success = self.kafka_manager.send_message(topic=topic, message=serialized, producer_id=self.producer_id)
+            with self._lock:
+                if success: 
+                    self.orders_sent += 1
+                else: 
+                    self.orders_rejected += 1
+            return {"success": bool(success), "topic": topic}
+        except Exception as e:
+            logger.error(f"Publish error: {e}")
+            with self._lock:
+                self.orders_rejected += 1
+            return {"success": False, "topic": topic}
+
     def close(self):
         """Close the producer."""
         logger.info(f"Closing OrderProducer: {self.producer_id}")

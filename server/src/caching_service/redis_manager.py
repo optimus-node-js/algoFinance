@@ -442,12 +442,22 @@ _redis_manager: Optional[RedisManager] = None
 _redis_lock = threading.Lock()
 
 def get_redis_manager(
-    host: str = "localhost",
-    port: int = 6379,
-    db: int = 0,
+    host: str = None,
+    port: int = None,
+    db: int = None,
     **kwargs
 ) -> RedisManager:
     """Get or create global Redis manager instance."""
+    import os
+    
+    # Use environment variables if not provided
+    if host is None:
+        host = os.getenv("REDIS_HOST", "localhost")
+    if port is None:
+        port = int(os.getenv("REDIS_PORT", "6379"))
+    if db is None:
+        db = int(os.getenv("REDIS_DB", "0"))
+    
     global _redis_manager
     
     with _redis_lock:

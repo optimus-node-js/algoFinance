@@ -41,12 +41,20 @@ from datetime import datetime, UTC
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("gtt_operations")
 
 class GTTOperationError(Exception):
     """Raised when GTT operations fail."""
     pass
 
+@idempotency_wrapper(method_type="trading", ttl=300, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("modify_gtt_rule", APIPriority.LOW)
 async def modify_gtt_rule(
     gtt_id: str,
@@ -129,6 +137,7 @@ async def modify_gtt_rule(
         logger.error(f"❌ GTT modification failed for {gtt_id}: {e}")
         return {'success': False, 'gtt_id': gtt_id, 'error': str(e)}
 
+@idempotency_wrapper(method_type="trading", ttl=300, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("cancel_gtt_rule", APIPriority.LOW)
 async def cancel_gtt_rule(
     gtt_id: str,
@@ -187,6 +196,7 @@ async def cancel_gtt_rule(
         logger.error(f"❌ GTT cancellation failed for {gtt_id}: {e}")
         return {'success': False, 'gtt_id': gtt_id, 'error': str(e)}
 
+@idempotency_wrapper(method_type="account", ttl=60, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("gtt_rule_details", APIPriority.LOW)
 async def get_gtt_details(
     gtt_id: str,
@@ -263,6 +273,7 @@ async def get_gtt_details(
         logger.error(f"❌ GTT details fetch failed for {gtt_id}: {e}")
         return {'success': False, 'gtt_id': gtt_id, 'error': str(e)}
 
+@idempotency_wrapper(method_type="account", ttl=60, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("gtt_rule_list", APIPriority.LOW)
 async def get_gtt_list(
     status_filter: Optional[str] = None,

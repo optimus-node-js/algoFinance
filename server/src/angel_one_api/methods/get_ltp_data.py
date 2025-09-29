@@ -41,12 +41,20 @@ from rate_limiter.api_limits import API_LIMITS
 # Import new Angel One logger
 from logger import get_api_logger
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("get_ltp_data")
 
 class LTPDataError(Exception):
     """Raised when LTP data cannot be fetched."""
     pass
 
+@idempotency_wrapper(method_type="market", ttl=30, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("get_ltp_data", APIPriority.CRITICAL)
 async def get_ltp_data(
     symbol: str, 

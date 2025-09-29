@@ -392,9 +392,9 @@ __all__ = [
 ]
 
 # Summary Statistics
-print(f"📊 Angel One API Limits Configuration Loaded:")
-print(f"   📈 Total Methods: {len(ANGEL_ONE_API_LIMITS)}")
-print(f"   🔴 CRITICAL: {len([l for l in ANGEL_ONE_API_LIMITS.values() if l.priority == APIPriority.CRITICAL])}")
-print(f"   🟡 HIGH: {len([l for l in ANGEL_ONE_API_LIMITS.values() if l.priority == APIPriority.HIGH])}")
-print(f"   🟢 MEDIUM: {len([l for l in ANGEL_ONE_API_LIMITS.values() if l.priority == APIPriority.MEDIUM])}")
-print(f"   🔵 LOW: {len([l for l in ANGEL_ONE_API_LIMITS.values() if l.priority == APIPriority.LOW])}")
+print(f"Angel One API Limits Configuration Loaded:")
+print(f"   Total Methods: {len(ANGEL_ONE_API_LIMITS)}")
+print(f"   CRITICAL: {len([l for l in ANGEL_ONE_API_LIMITS.values() if l.priority == APIPriority.CRITICAL])}")
+print(f"   HIGH: {len([l for l in ANGEL_ONE_API_LIMITS.values() if l.priority == APIPriority.HIGH])}")
+print(f"   MEDIUM: {len([l for l in ANGEL_ONE_API_LIMITS.values() if l.priority == APIPriority.MEDIUM])}")
+print(f"   LOW: {len([l for l in ANGEL_ONE_API_LIMITS.values() if l.priority == APIPriority.LOW])}")

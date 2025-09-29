@@ -39,12 +39,20 @@ from datetime import datetime, UTC, timedelta
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("create_gtt_rule")
 
 class GTTRuleError(Exception):
     """Raised when GTT rule creation fails."""
     pass
 
+@idempotency_wrapper(method_type="trading", ttl=300, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("create_gtt_rule", APIPriority.LOW)
 async def create_gtt_rule(
     tradingsymbol: str,

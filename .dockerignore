@@ -1,0 +1,60 @@
+# Git
+.git
+.gitignore
+
+# Virtual environments
+hft_venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Documentation
+*.md
+docs/
+
+# Memory bank (contains docs only)
+memory-bank/
+
+# Test files
+**/testing/
+**/*test*.py
+pytest.ini
+
+# Temporary files
+.tmp/
+temp/
+
+# Node modules (if any)
+node_modules/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Scripts
+scripts.py
+docker-scripts.py
+
+# Data files
+*.csv
+*.json
+*.db
+*.sqlite

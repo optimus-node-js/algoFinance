@@ -32,12 +32,20 @@ from datetime import datetime, UTC
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("logout")
 
 class LogoutError(Exception):
     """Raised when logout fails."""
     pass
 
+@idempotency_wrapper(method_type="auth", ttl=600, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("logout", APIPriority.LOW)
 async def logout(_rate_limit_permit: Optional[Dict] = None) -> Dict[str, Any]:
     """

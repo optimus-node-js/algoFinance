@@ -483,6 +483,10 @@ class AngelOneRateController:
         
         return status
     
+    def get_statistics(self):
+        """Get rate limiter statistics for health checks."""
+        return self.get_status()
+    
     def reset_emergency_brake(self):
         """Reset emergency brake (use with caution)."""
         self.emergency_brake = False

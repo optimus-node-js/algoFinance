@@ -248,7 +248,7 @@ class SessionManager:
         
         try:
             # Use token manager to refresh
-            from .token_manager import TokenManager
+            from angel_one_api.authentication.token_manager import TokenManager
             
             token_manager = TokenManager()
             result = await token_manager.refresh_token(session.refresh_token)

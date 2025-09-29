@@ -38,12 +38,20 @@ from datetime import datetime, UTC
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("get_position")
 
 class PositionError(Exception):
     """Raised when position data fetching fails."""
     pass
 
+@idempotency_wrapper(method_type="account", ttl=60, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("get_position", APIPriority.HIGH)
 async def get_position(_rate_limit_permit: Optional[Dict] = None) -> Dict[str, Any]:
     """

@@ -43,7 +43,7 @@ try:
     from core.message_broker import MessageBroker
     from data_ingestion.historical import HistoricalDataManager
     from core.connections import ConnectionManager
-    from config import settings
+    from angel_one_api.config import settings
     
     # Test if we can create instances
     test_broker = MessageBroker()

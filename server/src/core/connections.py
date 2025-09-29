@@ -3,7 +3,7 @@ import os
 import sys
 from threading import Lock, current_thread
 from pymongo import MongoClient
-from SmartApi.smartConnect import SmartConnect
+from SmartApi import SmartConnect
 from limiter import Limiter
 import pyotp
 import itertools
@@ -13,7 +13,14 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 sys.path.append(PROJECT_ROOT)
 
 # Import settings from the centralized config file
-from config import settings
+try:
+    from angel_one_api.config import settings
+except ImportError:
+    # Fallback: create minimal settings if config is not found
+    class Settings:
+        def __dict__(self):
+            return {}
+    settings = Settings()
 
 class ConnectionManager:
     """

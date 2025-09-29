@@ -50,7 +50,7 @@ STRICT RATE LIMITING: All 25 APIs with exact documentation limits
 
     # Initialize rate controller first
     from angel_one_api.rate_limiter.rate_controller import initialize_rate_controller
-    from config import settings
+    from angel_one_api.config import settings
     
     # Initialize with 5 API keys for maximum capacity
     api_keys = list(settings.API_KEYS.values())

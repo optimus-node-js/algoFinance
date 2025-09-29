@@ -6,6 +6,48 @@
   <component name="ChangeListManager">
     <list default="true" id="86ea4a35-6808-4f45-a0b9-34eee183ec2f" name="Changes" comment="Kafka Integrated with Process of HFT Starting Day 1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/angel_one_api/test_simple_api.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/memory-bank/activeContext.md" beforeDir="false" afterPath="$PROJECT_DIR$/memory-bank/activeContext.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/hft_requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server/hft_requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/ai/backtesting/backtest_engine.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/ai/backtesting/backtest_engine.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/ai/master/ai_master_orchestrator.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/ai/master/ai_master_orchestrator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/config/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/angel_one_main.log" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/angel_one_main.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/api_methods/place_order.log" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/api_methods/place_order.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/errors/database_failures.log" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/errors/database_failures.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/infrastructure/fastapi_main.log" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/logger/logs/infrastructure/fastapi_main.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/memory-bank/activeContext.md" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/memory-bank/activeContext.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/memory-bank/progress.md" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/memory-bank/progress.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/batch_margin.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/batch_margin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/cancel_order.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/cancel_order.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/convert_position.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/convert_position.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/create_gtt_rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/create_gtt_rule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/generate_tokens.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/generate_tokens.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_all_holding.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_all_holding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_candle_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_candle_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_holding.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_holding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_ltp_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_ltp_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_market_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_market_status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_order_book.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_order_book.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_position.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_position.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_profile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_quote.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_quote.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_rms.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_rms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_top_gainers_losers.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_top_gainers_losers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_trade_book.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/get_trade_book.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/gtt_operations.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/gtt_operations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/login_by_password.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/login_by_password.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/logout.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/logout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/modify_order.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/modify_order.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/option_greek.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/option_greek.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/order_details.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/order_details.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/place_order.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/place_order.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/methods/search_scrip.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/methods/search_scrip.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/angel_one_api/rate_limiter/api_limit_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/angel_one_api/rate_limiter/api_limit_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/core/connections.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/core/connections.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/messaging_enhanced/kafka/producers/order_producer.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/messaging_enhanced/kafka/producers/order_producer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,8 +97,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.178" />
-        <option value="bundled-python-sdk-ce6832f46686-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.178" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-PY-252.26199.168" />
+        <option value="bundled-python-sdk-b3d66beaba9a-c6efb3732140-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.26199.168" />
       </set>
     </attachedChunks>
   </component>
@@ -69,6 +111,8 @@
       <updated>1758522953842</updated>
       <workItem from="1758522958969" duration="2743000" />
       <workItem from="1758530062653" duration="936000" />
+      <workItem from="1759131015586" duration="2184000" />
+      <workItem from="1759135575773" duration="5285000" />
     </task>
     <task id="LOCAL-00001" summary="Kafka Integrated with Process of HFT Starting Day 1">
       <option name="closed" value="true" />

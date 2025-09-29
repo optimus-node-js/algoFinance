@@ -41,12 +41,20 @@ from datetime import datetime, UTC
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("batch_margin")
 
 class BatchMarginError(Exception):
     """Raised when batch margin calculation fails."""
     pass
 
+@idempotency_wrapper(method_type="account", ttl=120, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("batch_margin", APIPriority.MEDIUM)
 async def batch_margin(
     positions: List[Dict[str, Any]],

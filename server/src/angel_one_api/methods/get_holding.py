@@ -35,12 +35,20 @@ from datetime import datetime, UTC
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("get_holding")
 
 class HoldingError(Exception):
     """Raised when holdings data fetching fails."""
     pass
 
+@idempotency_wrapper(method_type="account", ttl=300, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("get_holding", APIPriority.HIGH)
 async def get_holding(_rate_limit_permit: Optional[Dict] = None) -> Dict[str, Any]:
     """

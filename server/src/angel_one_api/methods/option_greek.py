@@ -33,12 +33,20 @@ from datetime import datetime, UTC
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("option_greek")
 
 class OptionGreekError(Exception):
     """Raised when option Greek calculation fails."""
     pass
 
+@idempotency_wrapper(method_type="market", ttl=300, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("option_greek", APIPriority.MEDIUM)
 async def option_greek(
     exchange: str,

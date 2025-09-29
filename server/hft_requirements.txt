@@ -1,122 +1,76 @@
-# HFT Trading System Dependencies
-# ==================================
+# Core HFT System Dependencies
+# =============================
 
-# Core Framework
-fastapi==0.104.1
-uvicorn==0.24.0
-pydantic==2.5.0
+# FastAPI & Web Framework
+fastapi==0.117.1
+uvicorn[standard]==0.36.0
+starlette==0.48.0
+pydantic==2.11.9
+pydantic-settings==2.10.1
 
-# Message Streaming & Queues
-confluent-kafka[avro]==2.3.0
-kafka-python==2.0.2
-avro-python3==1.11.3
-pika==1.3.2
-
-# Database & Storage
-redis==5.0.1
-timescaledb==0.0.12
-clickhouse-driver==0.2.6
-pymongo==4.6.0
-psycopg2-binary==2.9.9
-
-# Machine Learning & AI
-scikit-learn==1.3.2
-pandas==2.1.4
-numpy==1.25.2
-matplotlib==3.8.2
-seaborn==0.13.0
-vectorbt==0.25.2
-backtrader==1.9.78.123
-zipline-reloaded==3.0.3
-
-# ML Infrastructure
-mlflow==2.8.1
-onnx==1.15.0
-onnxruntime==1.16.3
-dask==2023.12.0
-ray==2.8.1
-
-# NLP & Sentiment Analysis
-transformers==4.36.2
-torch==2.1.2
-spacy==3.7.2
-nltk==3.8.1
-textblob==0.17.1
-
-# Data Processing
-pandas-ta==0.3.14b0
-ta-lib==0.4.28
-yfinance==0.2.25
-alpha-vantage==2.3.1
-
-# API Clients & News
-newsapi-python==0.2.7
-requests==2.31.0
-websocket-client==1.7.0
-tweepy==4.14.0
-praw==7.7.1
-
-# Monitoring & Observability
-prometheus-client==0.19.0
-jaeger-client==4.8.0
-opentelemetry-api==1.21.0
-opentelemetry-sdk==1.21.0
-
-# Risk Management & Math
-scipy==1.11.4
-statsmodels==0.14.1
-arch==6.2.0
-quantlib-python==1.32
-
-# Async & Concurrency
-asyncio-mqtt==0.16.1
+# Async & Performance
+asyncio
 aioredis==2.0.1
-asyncpg==0.29.0
-httpx==0.25.2
+async-timeout==5.0.1
 
-# Configuration & Environment
-python-dotenv==1.0.0
-pydantic-settings==2.1.0
-click==8.1.7
-typer==0.9.0
+# Database & Caching
+redis==6.4.0
+pymongo==4.15.1
 
-# Testing & Development
-pytest==7.4.3
-pytest-asyncio==0.21.1
-pytest-mock==3.12.0
-black==23.11.0
-isort==5.12.0
-mypy==1.7.1
+# Message Brokers
+confluent-kafka==2.11.1
+kafka-python==2.2.15
+pika==1.3.2
+aio-pika==9.3.1
 
-# Existing Angel One Dependencies
-SmartApi==1.3.0
+# Data Processing & ML
+numpy==2.3.3
+pandas==2.3.2
+avro-python3==1.10.2
+
+# Trading & Finance
+smartapi-python==1.5.5
+pycryptodome==3.21.0
+
+# Utilities
+requests==2.32.5
+python-dotenv==1.1.1
 pyotp==2.9.0
-limiter==0.3.1
+psutil==6.1.0
+loguru==0.7.3
+logzero==1.7.0
 
-# Additional Utilities
-python-json-logger==2.0.7
-colorama==0.4.6
-tqdm==4.66.1
-schedule==1.2.1
-APScheduler==3.10.4
+# Rate Limiting
+limiter==0.5.0
+token-bucket==0.3.0
 
-# Low-latency & Performance
-cython==3.0.6
-numba==0.58.1
-bottleneck==1.3.7
-pyarrow==14.0.2
+# WebSockets
+websocket-client==1.8.0
+websockets==15.0.1
 
-# gRPC for Low-latency Services
-grpcio==1.60.0
-grpcio-tools==1.60.0
-protobuf==4.25.1
+# Network & HTTP
+urllib3==2.5.0
+certifi==2025.8.3
+charset-normalizer==3.4.3
+idna==3.10
 
-# Security & Authentication
-cryptography==41.0.8
-PyJWT==2.8.0
-passlib==1.7.4
+# Development & Testing
+pytest
+pytest-asyncio
 
-# Development Tools
-jupyter==1.0.0
-ipython==8.18.1
-rich==13.7.0
+# Typing & Validation
+typing-extensions==4.15.0
+annotated-types==0.7.0
+
+# Date & Time
+python-dateutil==2.9.0.post0
+pytz==2025.2
+
+# Serialization
+click==8.3.0
+
+# gRPC (for low-latency Risk Service)
+grpcio==1.75.1
+
+# DNS
+dnspython==2.8.0

@@ -176,6 +176,25 @@ class ServiceManager:
             print(f"❌ Failed to start Angel One API: {e}")
             raise
 
+    def start_risk(self):
+        """Start Risk Service FastAPI app."""
+        port = os.getenv("RISK_API_PORT") or "8003"
+        try:
+            cmd = [sys.executable, "-m", "server.src.risk_service.api"]
+            env = {**os.environ, "RISK_API_PORT": port}
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                env=env
+            )
+            self.running_processes["risk"] = process
+            print(f"✅ Risk Service starting on port {port}")
+            print(f"🌐 Health check: http://localhost:{port}/health")
+            return process
+        except Exception as e:
+            print(f"❌ Failed to start Risk Service: {e}")
+            raise
+
     def start_all_services(self):
         """Start all core services."""
         self.print_banner("Starting All HFT Services")
@@ -187,11 +206,13 @@ class ServiceManager:
         # Start microservices
         print("\n🚀 Starting microservices...")
         self.start_angel_one()
+        self.start_risk()
         
         print("\n✅ All services started successfully!")
         print("\n📋 Service URLs:")
         print("   🔹 Angel One API: http://localhost:8000")
         print("   🔹 API Docs: http://localhost:8000/scalar-docs")
+        print("   🔹 Risk Service: http://localhost:8003")
         print("   🔹 Redis: localhost:6379")
 
     def run_integration_tests(self):
@@ -260,7 +281,7 @@ def main():
     # Service commands
     parser.add_argument("command", nargs="?", default="help", 
                        choices=[
-                           "run:angel-one", "run:redis", "run:kafka", "run:all", "run:dev-stack",
+                           "run:angel-one", "run:redis", "run:kafka", "run:risk", "run:all", "run:dev-stack",
                            "test:integration", "test:angel-one", "test:performance",
                            "stop:all", "status", "logs", "monitor", "help"
                        ],
@@ -276,6 +297,17 @@ def main():
         
         elif args.command == "run:redis":
             manager.start_redis()
+        
+        elif args.command == "run:risk":
+            manager.start_risk()
+            print("\n⏳ Press Ctrl+C to stop the service...")
+            try:
+                # Keep the main process alive
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                print("\n🛑 Stopping Risk service...")
+                manager.stop_all_services()
         
         elif args.command == "run:angel-one":
             manager.start_angel_one()
@@ -325,4 +357,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

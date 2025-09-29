@@ -22,9 +22,9 @@ Usage:
     client = auth.get_authenticated_client()
 """
 
-from .auth_manager import AuthManager, AuthenticationError
-from .session_manager import SessionManager, SessionError
-from .token_manager import TokenManager, TokenError
+from angel_one_api.authentication.auth_manager import AuthManager, AuthenticationError
+from angel_one_api.authentication.session_manager import SessionManager, SessionError
+from angel_one_api.authentication.token_manager import TokenManager, TokenError
 
 __all__ = [
     'AuthManager',

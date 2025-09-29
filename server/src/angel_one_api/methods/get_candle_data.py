@@ -47,6 +47,13 @@ from logger import get_api_logger
 from rate_limiter.rate_controller import get_rate_controller, rate_limited, APIPriority
 from rate_limiter.api_limits import API_LIMITS
 
+# Import idempotency enhancements
+try:
+    from ..enhancements.idempotency_manager import idempotency_wrapper
+    IDEMPOTENCY_AVAILABLE = True
+except ImportError:
+    IDEMPOTENCY_AVAILABLE = False
+
 logger = get_api_logger("get_candle_data")
 
 class CandleDataError(Exception):
@@ -64,6 +71,7 @@ class Interval:
     ONE_HOUR = "ONE_HOUR"
     ONE_DAY = "ONE_DAY"
 
+@idempotency_wrapper(method_type="market", ttl=60, cache_response=True) if IDEMPOTENCY_AVAILABLE else lambda x: x
 @rate_limited("get_candle_data", APIPriority.HIGH)
 async def get_candle_data(
     exchange: str,
