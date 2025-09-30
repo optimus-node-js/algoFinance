@@ -1,0 +1,74 @@
+{
+  "kafka": {
+    "bootstrap.servers": "localhost:9092",
+    "client.id": "hft_strategy_engine_dev",
+    "group.id": "strategy_workers_dev",
+    "auto.offset.reset": "latest",
+    "enable.auto.commit": false,
+    "max.poll.interval.ms": 30000
+  },
+  "risk_service": {
+    "url": "http://localhost:8003",
+    "timeout_seconds": 5,
+    "enable_risk_checks": true,
+    "retry_attempts": 3
+  },
+  "angel_one_api": {
+    "url": "http://localhost:8000",
+    "timeout_seconds": 10
+  },
+  "orchestrator": {
+    "orchestrator_id": "hft_dev_orchestrator",
+    "max_workers": 2,
+    "health_check_interval": 60,
+    "load_balance_interval": 120,
+    "enable_auto_scaling": false,
+    "min_workers": 1,
+    "max_worker_load": 0.9
+  },
+  "workers": [
+    {
+      "worker_id": "dev_worker",
+      "input_topics": ["market_data"],
+      "output_topic": "trading_signals",
+      "max_strategies": 2
+    }
+  ],
+  "strategies": [
+    {
+      "strategy_id": "test_momentum",
+      "strategy_class": "MomentumStrategy",
+      "symbol": "RELIANCE",
+      "timeframe": "1m",
+      "worker_id": "dev_worker",
+      "parameters": {
+        "momentum_threshold": 0.02,
+        "rsi_momentum_level": 60,
+        "sma_fast_period": 10,
+        "sma_slow_period": 20,
+        "volume_threshold": 1.5,
+        "min_confidence": 0.6
+      }
+    }
+  ],
+  "logging": {
+    "level": "DEBUG",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file_path": "/app/logs/strategy_engine_dev.log",
+    "max_file_size": "5MB",
+    "backup_count": 3
+  },
+  "metrics": {
+    "enable_metrics_server": true,
+    "metrics_port": 8004,
+    "update_interval": 5,
+    "export_prometheus": false
+  },
+  "performance": {
+    "max_signal_latency_ms": 200,
+    "max_processing_time_ms": 100,
+    "target_throughput_msg_per_sec": 500,
+    "memory_limit_mb": 256
+  }
+}
+

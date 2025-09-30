@@ -1,30 +1,56 @@
-# Strategy Engine (Future Implementation)
+# Dockerfile for Strategy Engine Service
+# Optimized for high-performance trading operations
+
 FROM python:3.13-slim
 
-WORKDIR /app
+LABEL maintainer="HFT Development Team"
+LABEL service="strategy-engine"
+LABEL version="1.0.0"
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
+ENV STRATEGY_ENGINE_ENV=production
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
+    gcc \
+    g++ \
+    make \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
 COPY server/hft_requirements.txt /app/requirements.txt
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source code
 COPY server/src /app
 
-# Set Python path
-ENV PYTHONPATH=/app
+# Copy strategy engine specific files
+COPY server/src/strategy_engine /app/strategy_engine
 
-# Expose port
-EXPOSE 8004
+# Create directories for logs and config
+RUN mkdir -p /app/logs /app/config /app/data
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash strategy && \
+    chown -R strategy:strategy /app
+
+# Switch to non-root user
+USER strategy
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8004/health || exit 1
+    CMD python -c "import asyncio; from strategy_engine.main import StrategyEngineRunner; runner = StrategyEngineRunner(); print('healthy' if runner else 'unhealthy')" || exit 1
 
-# Run the application (placeholder - to be implemented)
-CMD ["python", "-c", "print('Strategy Engine - Coming Soon'); import time; time.sleep(86400)"]
+# Expose port for metrics/monitoring (if needed)
+EXPOSE 8004
 
+# Default command - can be overridden in docker-compose
+CMD ["python", "-m", "strategy_engine.main", "--config", "/app/config/strategy_config.json"]

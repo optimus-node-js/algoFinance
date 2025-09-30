@@ -33,7 +33,7 @@ from models.auth import (
     AuthStatusResponse,
     LogoutResponse
 )
-from api.dependencies import get_auth_manager
+from api.dependencies import get_auth_manager, validate_angel_one_session
 
 router = APIRouter()
 logger = get_api_logger("auth_router")
@@ -172,7 +172,10 @@ async def auto_login(
         )
 
 @router.get("/status", response_model=AuthStatusResponse)
-async def get_auth_status(auth_manager: AuthManager = Depends(get_auth_manager)):
+async def get_auth_status(
+    auth_manager: AuthManager = Depends(get_auth_manager),
+    _: bool = Depends(validate_angel_one_session)
+):
     """
     📊 **Authentication Status**
     
@@ -229,7 +232,8 @@ async def get_auth_status(auth_manager: AuthManager = Depends(get_auth_manager))
 @router.post("/configure", response_model=ConfigureKeysResponse)
 async def configure_api_keys(
     request: ConfigureKeysRequest,
-    auth_manager: AuthManager = Depends(get_auth_manager)
+    auth_manager: AuthManager = Depends(get_auth_manager),
+    _: bool = Depends(validate_angel_one_session)
 ):
     """
     🔧 **Configure API Keys**
@@ -307,7 +311,10 @@ async def configure_api_keys(
         )
 
 @router.post("/refresh")
-async def refresh_sessions(auth_manager: AuthManager = Depends(get_auth_manager)):
+async def refresh_sessions(
+    auth_manager: AuthManager = Depends(get_auth_manager),
+    _: bool = Depends(validate_angel_one_session)
+):
     """
     🔄 **Refresh Sessions**
     
@@ -355,7 +362,10 @@ async def refresh_sessions(auth_manager: AuthManager = Depends(get_auth_manager)
         )
 
 @router.post("/logout", response_model=LogoutResponse)
-async def logout_all_sessions(auth_manager: AuthManager = Depends(get_auth_manager)):
+async def logout_all_sessions(
+    auth_manager: AuthManager = Depends(get_auth_manager),
+    _: bool = Depends(validate_angel_one_session)
+):
     """
     🚪 **Logout All Sessions**
     
@@ -409,7 +419,10 @@ async def logout_all_sessions(auth_manager: AuthManager = Depends(get_auth_manag
         )
 
 @router.get("/health")
-async def auth_health_check(auth_manager: AuthManager = Depends(get_auth_manager)):
+async def auth_health_check(
+    auth_manager: AuthManager = Depends(get_auth_manager),
+    _: bool = Depends(validate_angel_one_session)
+):
     """
     💚 **Authentication Health Check**
     

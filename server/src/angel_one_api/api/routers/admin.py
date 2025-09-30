@@ -16,7 +16,7 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from models.admin import MetricsResponse, SystemStatsResponse, LogStatsResponse
 from logger import get_infrastructure_logger
-from api.dependencies import get_auth_manager
+from api.dependencies import get_auth_manager, validate_angel_one_session
 from services.authentication import AuthManager
 
 router = APIRouter()
@@ -24,7 +24,8 @@ logger = get_infrastructure_logger("admin_router")
 
 @router.get("/metrics", response_model=MetricsResponse)
 async def get_system_metrics(
-    auth_manager: AuthManager = Depends(get_auth_manager)
+    auth_manager: AuthManager = Depends(get_auth_manager),
+    _: bool = Depends(validate_angel_one_session)
 ):
     """📊 Get comprehensive system metrics"""
     try:
@@ -116,7 +117,7 @@ async def get_system_metrics(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/stats", response_model=SystemStatsResponse)
-async def get_system_stats():
+async def get_system_stats(_: bool = Depends(validate_angel_one_session)):
     """📈 Get system performance statistics"""
     try:
         # Get real system stats
@@ -168,7 +169,7 @@ async def get_system_stats():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/logs", response_model=LogStatsResponse)
-async def get_log_stats():
+async def get_log_stats(_: bool = Depends(validate_angel_one_session)):
     """📄 Get logging statistics"""
     try:
         # Get logger statistics from the logging system
@@ -218,7 +219,7 @@ async def get_log_stats():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/cleanup")
-async def cleanup_system():
+async def cleanup_system(_: bool = Depends(validate_angel_one_session)):
     """🧹 Perform system cleanup operations"""
     try:
         cleanup_results = {
@@ -243,7 +244,7 @@ async def cleanup_system():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/health-detailed")
-async def get_detailed_health():
+async def get_detailed_health(_: bool = Depends(validate_angel_one_session)):
     """🏥 Get detailed health information"""
     try:
         health_info = {

@@ -33,7 +33,7 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from services.authentication import AuthManager
 from rate_limiter.rate_controller import get_rate_controller
-from api.dependencies import get_auth_manager
+from api.dependencies import get_auth_manager, validate_angel_one_session
 
 router = APIRouter()
 logger = get_infrastructure_logger("health_router")
@@ -232,7 +232,10 @@ class HealthChecker:
 health_checker = HealthChecker()
 
 @router.get("/status")
-async def health_status(auth_manager: AuthManager = Depends(get_auth_manager)):
+async def health_status(
+    auth_manager: AuthManager = Depends(get_auth_manager),
+    _: bool = Depends(validate_angel_one_session)
+):
     """
     🩺 **Comprehensive Health Status**
     
@@ -330,7 +333,10 @@ async def health_status(auth_manager: AuthManager = Depends(get_auth_manager)):
         return JSONResponse(content=error_response, status_code=503)
 
 @router.get("/ready")
-async def readiness_check(auth_manager: AuthManager = Depends(get_auth_manager)):
+async def readiness_check(
+    auth_manager: AuthManager = Depends(get_auth_manager),
+    _: bool = Depends(validate_angel_one_session)
+):
     """
     ⚡ **Readiness Check**
     
@@ -370,7 +376,7 @@ async def readiness_check(auth_manager: AuthManager = Depends(get_auth_manager))
         )
 
 @router.get("/live")
-async def liveness_check():
+async def liveness_check(_: bool = Depends(validate_angel_one_session)):
     """
     💚 **Liveness Check**
     
@@ -386,7 +392,7 @@ async def liveness_check():
     }
 
 @router.get("/metrics")
-async def health_metrics():
+async def health_metrics(_: bool = Depends(validate_angel_one_session)):
     """
     📊 **Health Metrics**
     

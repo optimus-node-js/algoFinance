@@ -88,9 +88,24 @@ class ConnectionManager:
     def get_smartapi_client(cls):
         """
         Provides a rate-limited SmartAPI client.
-        It uses a pool of API keys and rotates them to distribute load.
+        Uses sessions from AuthManager if available, otherwise creates new ones.
         """
         with cls._lock:
+            # Try to get authenticated client from AuthManager first
+            try:
+                from angel_one_api.authentication.auth_manager import AuthManager
+                auth_manager = AuthManager()
+                
+                # Get already authenticated client from AuthManager
+                authenticated_client = auth_manager.get_authenticated_client()
+                if authenticated_client:
+                    print("✅ Using existing authenticated session from AuthManager")
+                    return authenticated_client
+                    
+            except Exception as e:
+                print(f"⚠️ Could not get AuthManager session: {e}")
+            
+            # Fallback to original logic for backward compatibility
             # Initialize rate controller if not already done
             if cls._angel_one_rate_controller is None:
                 cls.initialize_angel_one_rate_controller()
@@ -105,7 +120,7 @@ class ConnectionManager:
             current_key_name, current_api_key = next(cls._api_key_cycler)
             
             if current_key_name not in cls._smartapi_clients:
-                print(f"Initializing Angel One SmartAPI connection for '{current_key_name}'...")
+                print(f"⚠️ Creating new SmartAPI connection for '{current_key_name}' (AuthManager not available)...")
                 try:
                     client = SmartConnect(current_api_key)
                     

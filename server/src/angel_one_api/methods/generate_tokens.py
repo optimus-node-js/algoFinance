@@ -79,9 +79,8 @@ async def generate_tokens(
         
         # Get Angel One client
         # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         # angel_client already set above
         if not angel_client:
@@ -175,9 +174,8 @@ async def auto_refresh_tokens() -> Dict[str, Any]:
     try:
         # Get stored refresh token (would typically come from secure storage)
         # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         # This is a simplified implementation - in practice, you'd have
         # secure token storage and retrieval mechanisms
@@ -215,9 +213,8 @@ def _get_stored_refresh_token() -> Optional[str]:
         
         # For now, we'll try to get it from connection manager
         # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         # This is a placeholder - actual implementation would vary
         # based on your storage mechanism
@@ -265,9 +262,8 @@ async def _update_connection_tokens(token_result: Dict[str, Any]) -> bool:
     try:
         # Update connection manager with new tokens
         # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         # This would update the active connection with new tokens
         # Implementation depends on your connection manager design

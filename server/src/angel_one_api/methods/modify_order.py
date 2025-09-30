@@ -101,9 +101,8 @@ async def modify_order(
         
         # Get Angel One client
         # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         # angel_client already set above
         if not angel_client:

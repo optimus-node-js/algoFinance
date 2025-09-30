@@ -5,7 +5,7 @@ WebSocket API Endpoints
 Real-time WebSocket endpoints for streaming data.
 """
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPException
 from typing import List, Dict, Set
 import json
 import asyncio
@@ -31,24 +31,43 @@ class ConnectionManager:
         self.symbol_subscriptions: Dict[WebSocket, Set[str]] = {}
     
     async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-        logger.info("WebSocket connected", {"total_connections": len(self.active_connections)})
+        try:
+            await websocket.accept()
+            self.active_connections.append(websocket)
+            logger.info("WebSocket connected", {"total_connections": len(self.active_connections)})
+        except Exception as e:
+            logger.error("Failed to accept WebSocket connection", error=e)
+            raise HTTPException(status_code=400, detail="WebSocket connection failed")
     
     def disconnect(self, websocket: WebSocket):
-        if websocket in self.active_connections:
-            self.active_connections.remove(websocket)
-        logger.info("WebSocket disconnected", {"total_connections": len(self.active_connections)})
+        try:
+            if websocket in self.active_connections:
+                self.active_connections.remove(websocket)
+            logger.info("WebSocket disconnected", {"total_connections": len(self.active_connections)})
+        except Exception as e:
+            logger.error("Error during WebSocket disconnect", error=e)
     
     async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
+        try:
+            await websocket.send_text(message)
+        except Exception as e:
+            logger.error("Failed to send WebSocket message", error=e)
+            # Remove dead connection
+            if websocket in self.active_connections:
+                self.active_connections.remove(websocket)
     
     async def broadcast(self, message: str):
+        dead_connections = []
         for connection in self.active_connections:
             try:
                 await connection.send_text(message)
-            except:
-                # Remove dead connections
+            except Exception as e:
+                logger.error("Failed to broadcast to WebSocket", error=e)
+                dead_connections.append(connection)
+        
+        # Remove dead connections
+        for connection in dead_connections:
+            if connection in self.active_connections:
                 self.active_connections.remove(connection)
 
 manager = ConnectionManager()
@@ -56,8 +75,12 @@ manager = ConnectionManager()
 @router.websocket("/market/ltp")
 async def websocket_market_ltp(websocket: WebSocket):
     """🌐 Real-time LTP data stream"""
-    await manager.connect(websocket)
-    subscribed_symbols = set()
+    try:
+        await manager.connect(websocket)
+        subscribed_symbols = set()
+    except Exception as e:
+        logger.error("Failed to establish LTP WebSocket connection", error=e)
+        return
     
     try:
         while True:
@@ -120,12 +143,19 @@ async def websocket_market_ltp(websocket: WebSocket):
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         logger.info("LTP WebSocket client disconnected", {"subscribed_symbols": len(subscribed_symbols)})
+    except Exception as e:
+        logger.error("LTP WebSocket error", error=e)
+        manager.disconnect(websocket)
 
 @router.websocket("/trading/orders")
 async def websocket_trading_orders(websocket: WebSocket):
     """🌐 Real-time order updates stream"""
-    await manager.connect(websocket)
-    last_order_count = 0
+    try:
+        await manager.connect(websocket)
+        last_order_count = 0
+    except Exception as e:
+        logger.error("Failed to establish trading WebSocket connection", error=e)
+        return
     
     try:
         while True:
@@ -171,12 +201,19 @@ async def websocket_trading_orders(websocket: WebSocket):
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         logger.info("Trading WebSocket client disconnected")
+    except Exception as e:
+        logger.error("Trading WebSocket error", error=e)
+        manager.disconnect(websocket)
 
 @router.websocket("/portfolio/updates")
 async def websocket_portfolio_updates(websocket: WebSocket):
     """🌐 Real-time portfolio updates stream"""
-    await manager.connect(websocket)
-    last_portfolio_hash = None
+    try:
+        await manager.connect(websocket)
+        last_portfolio_hash = None
+    except Exception as e:
+        logger.error("Failed to establish portfolio WebSocket connection", error=e)
+        return
     
     try:
         while True:
@@ -251,11 +288,18 @@ async def websocket_portfolio_updates(websocket: WebSocket):
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         logger.info("Portfolio WebSocket client disconnected")
+    except Exception as e:
+        logger.error("Portfolio WebSocket error", error=e)
+        manager.disconnect(websocket)
 
 @router.websocket("/admin/monitoring")
 async def websocket_admin_monitoring(websocket: WebSocket):
     """🌐 Real-time system monitoring stream"""
-    await manager.connect(websocket)
+    try:
+        await manager.connect(websocket)
+    except Exception as e:
+        logger.error("Failed to establish admin WebSocket connection", error=e)
+        return
     
     try:
         # Import psutil for real system monitoring
@@ -306,5 +350,8 @@ async def websocket_admin_monitoring(websocket: WebSocket):
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         logger.info("Admin monitoring WebSocket client disconnected")
+    except Exception as e:
+        logger.error("Admin WebSocket error", error=e)
+        manager.disconnect(websocket)
 
 

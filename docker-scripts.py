@@ -9,24 +9,57 @@ Manages dependencies, networking, and service health automatically.
 
 Usage:
     python docker-scripts.py --help                    # Show all commands
+    
+    # Group Commands
     python docker-scripts.py start:core               # Start core services (Redis, Kafka)
     python docker-scripts.py start:api                # Start API services (Angel One, Risk)
-    python docker-scripts.py start:all                # Start all services
-    python docker-scripts.py stop:all                 # Stop all services
+    python docker-scripts.py start:strategy           # Start Strategy Engine service
+    python docker-scripts.py start:all                # Start all services (no Strategy Engine)
+    python docker-scripts.py start:full-stack         # Start complete HFT stack (with Strategy Engine)
+    python docker-scripts.py stop:all                 # Stop all services (with cleanup)
+    
+    # Individual Service Commands
+    python docker-scripts.py start:redis              # Start Redis only
+    python docker-scripts.py start:kafka              # Start Kafka only
+    python docker-scripts.py start:angel-one-api      # Start Angel One API only
+    python docker-scripts.py start:risk-service       # Start Risk Service only
+    python docker-scripts.py start:strategy-engine    # Start Strategy Engine only
+    
+    # Management Commands
+    python docker-scripts.py clean-build-all          # Clean build and start all services
     python docker-scripts.py status                   # Show service status
     python docker-scripts.py logs [service]           # Show logs
     python docker-scripts.py health                   # Check service health
     python docker-scripts.py restart [service]        # Restart service(s)
 
 Examples:
-    # Start the complete HFT stack
+    # Start the complete HFT stack with Strategy Engine
+    python docker-scripts.py start:full-stack
+    
+    # Start core services + APIs (no Strategy Engine)
     python docker-scripts.py start:all
+    
+    # Start individual services
+    python docker-scripts.py start:redis
+    python docker-scripts.py start:strategy-engine
+    
+    # Clean build and start everything
+    python docker-scripts.py clean-build-all
     
     # Start only infrastructure
     python docker-scripts.py start:core
     
-    # Monitor specific service
-    python docker-scripts.py logs risk-service
+    # Start only Strategy Engine (requires core + API services)
+    python docker-scripts.py start:strategy
+    
+    # Stop all services with cleanup
+    python docker-scripts.py stop:all
+    
+    # Stop individual services
+    python docker-scripts.py stop:strategy-engine
+    
+    # Monitor Strategy Engine
+    python docker-scripts.py logs strategy-engine
     
     # Check system health
     python docker-scripts.py health
@@ -60,8 +93,10 @@ class HFTDockerManager:
         self.service_groups = {
             "core": ["redis", "zookeeper", "kafka"],
             "api": ["angel-one-api", "risk-service", "caching-service", "messaging-service"],
+            "strategy": ["strategy-engine"],
             "monitoring": ["kafka-ui", "redis-commander"],
-            "all": ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", "caching-service", "messaging-service"]
+            "all": ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", "caching-service", "messaging-service", "strategy-engine"],
+            "full-stack": ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", "caching-service", "messaging-service", "strategy-engine"]
         }
         
         # Health check endpoints
@@ -70,6 +105,7 @@ class HFTDockerManager:
             "risk-service": "http://localhost:8003/health",
             "caching-service": "http://localhost:8001/health",
             "messaging-service": "http://localhost:8002/health",
+            "strategy-engine": "http://localhost:8004/health",
             "redis": {"cmd": ["docker", "exec", "hft-redis", "redis-cli", "ping"]},
             "kafka": {"cmd": ["docker", "exec", "hft-kafka", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]}
         }
@@ -150,11 +186,14 @@ class HFTDockerManager:
         self.print_banner(f"Stopping HFT Services: {group.upper()}")
         
         if group == "all":
-            self.run_docker_compose(["down"])
+            # Use down --remove-orphans to ensure all containers are stopped
+            self.run_docker_compose(["down", "--remove-orphans"])
+            print("✅ All services stopped and containers removed")
         else:
             if group in self.service_groups:
                 services = self.service_groups[group]
                 self.run_docker_compose(["stop"] + services)
+                print(f"✅ {group.upper()} services stopped")
             else:
                 print(f"❌ Unknown service group: {group}")
 
@@ -275,6 +314,9 @@ class HFTDockerManager:
         print("   🔹 Risk Service: http://localhost:8003/health")
         print("   🔹 Caching Service: http://localhost:8001/health")
         print("   🔹 Messaging Service: http://localhost:8002/health")
+        print("   🔹 Strategy Engine: http://localhost:8004/health")
+        print("   🔹 Strategy Metrics: http://localhost:8004/metrics")
+        print("   🔹 Strategy Workers: http://localhost:8004/workers")
         print("   🔹 Kafka UI: http://localhost:8080 (with --profile monitoring)")
         print("   🔹 Redis UI: http://localhost:8081 (with --profile monitoring)")
         print("   🔹 Redis: localhost:6379")
@@ -288,6 +330,24 @@ class HFTDockerManager:
             self.run_docker_compose(["build"] + services)
         else:
             self.run_docker_compose(["build"])
+    
+    def clean_build_all(self):
+        """Clean build and start all services."""
+        self.print_banner("Clean Build & Start All HFT Services")
+        
+        print("🧹 Step 1: Stopping and removing all containers...")
+        try:
+            self.run_docker_compose(["down", "--remove-orphans", "--volumes"])
+        except:
+            print("⚠️  No running containers to stop")
+        
+        print("🔨 Step 2: Building all images (no cache)...")
+        self.run_docker_compose(["build", "--no-cache"])
+        
+        print("🚀 Step 3: Starting all services...")
+        self.start_services("all")
+        
+        print("✅ Clean build and start completed!")
 
 def main():
     """Main script entry point."""
@@ -295,9 +355,16 @@ def main():
     
     parser.add_argument("command", nargs="?", default="help",
                        choices=[
-                           "start:core", "start:api", "start:monitoring", "start:all",
-                           "stop:core", "stop:api", "stop:all",
-                           "restart", "build", "status", "logs", "health", "help"
+                           # Group commands
+                           "start:core", "start:api", "start:strategy", "start:monitoring", "start:all", "start:full-stack",
+                           "stop:core", "stop:api", "stop:strategy", "stop:monitoring", "stop:all",
+                           # Individual service commands
+                           "start:redis", "start:zookeeper", "start:kafka", "start:angel-one-api", "start:risk-service", 
+                           "start:caching-service", "start:messaging-service", "start:strategy-engine",
+                           "stop:redis", "stop:zookeeper", "stop:kafka", "stop:angel-one-api", "stop:risk-service",
+                           "stop:caching-service", "stop:messaging-service", "stop:strategy-engine",
+                           # Other commands
+                           "restart", "build", "clean-build-all", "status", "logs", "health", "help"
                        ],
                        help="Command to execute")
     
@@ -314,11 +381,25 @@ def main():
         
         elif args.command.startswith("start:"):
             group = args.command.split(":")[1]
-            manager.start_services(group)
+            # Handle individual services
+            individual_services = ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", 
+                                 "caching-service", "messaging-service", "strategy-engine"]
+            if group in individual_services:
+                manager.run_docker_compose(["up", "-d", group])
+                print(f"✅ {group} started successfully!")
+            else:
+                manager.start_services(group)
         
         elif args.command.startswith("stop:"):
             group = args.command.split(":")[1]
-            manager.stop_services(group)
+            # Handle individual services  
+            individual_services = ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", 
+                                 "caching-service", "messaging-service", "strategy-engine"]
+            if group in individual_services:
+                manager.run_docker_compose(["stop", group])
+                print(f"✅ {group} stopped successfully!")
+            else:
+                manager.stop_services(group)
         
         elif args.command == "restart":
             if args.service:
@@ -331,6 +412,9 @@ def main():
                 manager.build_services([args.service])
             else:
                 manager.build_services()
+        
+        elif args.command == "clean-build-all":
+            manager.clean_build_all()
         
         elif args.command == "status":
             manager.show_status()

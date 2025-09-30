@@ -12,6 +12,8 @@ pydantic-settings==2.10.1
 asyncio
 aioredis==2.0.1
 async-timeout==5.0.1
+aiohttp==3.9.1
+aiohttp-cors==0.7.0
 
 # Database & Caching
 redis==6.4.0

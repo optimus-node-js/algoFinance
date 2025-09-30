@@ -81,11 +81,9 @@ async def get_ltp_data(
     Rate Limit: 10 requests/second per API key
     """
     try:
-        # Get Angel One client (using the API key from rate limit permit)
-        # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        # Get Angel One client from ConnectionManager
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         if not _rate_limit_permit:
             raise LTPDataError("No rate limit permit - internal error")

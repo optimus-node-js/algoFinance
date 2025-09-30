@@ -74,9 +74,8 @@ async def logout(_rate_limit_permit: Optional[Dict] = None) -> Dict[str, Any]:
         
         # Get Angel One client
         # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         # angel_client already set above
         if not angel_client:
@@ -155,9 +154,8 @@ async def _get_session_info() -> Dict[str, Any]:
     try:
         # Get session details from connection manager
         # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         # This would extract current session info
         # Implementation depends on your connection manager design
@@ -237,9 +235,8 @@ async def _reset_connection_manager() -> bool:
     try:
         # Reset connection manager to clean state
         # Use interface to get SmartAPI client
-        from interface import get_angel_one_interface
-        interface = get_angel_one_interface()
-        angel_client = interface.smart_api
+        from core.connections import ConnectionManager
+        angel_client = ConnectionManager.get_smartapi_client()
         
         # This would reset the connection manager
         # Implementation depends on your connection manager design

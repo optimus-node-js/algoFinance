@@ -206,13 +206,17 @@ services:
       timeout: 10s
       retries: 3
 
-  # Strategy Engine (Future)
+  # Strategy Engine Service
   strategy-engine:
     build:
       context: .
       dockerfile: Dockerfile.strategy-engine
     container_name: hft-strategy-engine
     depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
       angel-one-api:
         condition: service_healthy
       risk-service:
@@ -221,19 +225,34 @@ services:
         condition: service_healthy
     ports:
       - "8004:8004"
+    env_file:
+      - .env
     environment:
       - ANGEL_ONE_API_URL=http://angel-one-api:8000
       - RISK_SERVICE_URL=http://risk-service:8003
+      - CACHING_SERVICE_URL=http://caching-service:8001
+      - MESSAGING_SERVICE_URL=http://messaging-service:8002
       - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - STRATEGY_ENGINE_ENV=production
+      - PYTHONPATH=/app
     volumes:
-      - ./server/src/strategies:/app/strategies
+      - ./server/src/strategy_engine:/app/strategy_engine
       - ./server/src/core:/app/core
+      - ./server/src/caching_service:/app/caching_service
+      - ./server/src/messaging_enhanced:/app/messaging_enhanced
+      - ./config/strategy_config.json:/app/config/strategy_config.json
+      - ./logs/strategy_engine:/app/logs
     networks:
       - hft-network
-    profiles:
-      - full-stack  # Only start with 'full-stack' profile
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8004/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
 
   # Monitoring & Observability (Optional)
   kafka-ui:
