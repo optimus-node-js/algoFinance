@@ -92,11 +92,13 @@ class HFTDockerManager:
         # Service groups
         self.service_groups = {
             "core": ["redis", "zookeeper", "kafka"],
+            "database": ["database-service"],
             "api": ["angel-one-api", "risk-service", "caching-service", "messaging-service"],
+            "streaming": ["market-data-streaming"],
             "strategy": ["strategy-engine"],
             "monitoring": ["kafka-ui", "redis-commander"],
-            "all": ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", "caching-service", "messaging-service", "strategy-engine"],
-            "full-stack": ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", "caching-service", "messaging-service", "strategy-engine"]
+            "all": ["redis", "zookeeper", "kafka", "database-service", "angel-one-api", "risk-service", "caching-service", "messaging-service", "market-data-streaming", "strategy-engine"],
+            "full-stack": ["redis", "zookeeper", "kafka", "database-service", "angel-one-api", "risk-service", "caching-service", "messaging-service", "market-data-streaming", "strategy-engine", "kafka-ui", "redis-commander"]
         }
         
         # Health check endpoints
@@ -105,7 +107,9 @@ class HFTDockerManager:
             "risk-service": "http://localhost:8003/health",
             "caching-service": "http://localhost:8001/health",
             "messaging-service": "http://localhost:8002/health",
+            "market-data-streaming": "http://localhost:8005/health",
             "strategy-engine": "http://localhost:8004/health",
+            "database-service": "http://localhost:8006/health",
             "redis": {"cmd": ["docker", "exec", "hft-redis", "redis-cli", "ping"]},
             "kafka": {"cmd": ["docker", "exec", "hft-kafka", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]}
         }
@@ -314,9 +318,12 @@ class HFTDockerManager:
         print("   🔹 Risk Service: http://localhost:8003/health")
         print("   🔹 Caching Service: http://localhost:8001/health")
         print("   🔹 Messaging Service: http://localhost:8002/health")
+        print("   🔹 Market Data Streaming: http://localhost:8005/health")
         print("   🔹 Strategy Engine: http://localhost:8004/health")
         print("   🔹 Strategy Metrics: http://localhost:8004/metrics")
         print("   🔹 Strategy Workers: http://localhost:8004/workers")
+        print("   🔹 Database Service: http://localhost:8006/health")
+        print("   🔹 Database API Docs: http://localhost:8006/docs")
         print("   🔹 Kafka UI: http://localhost:8080 (with --profile monitoring)")
         print("   🔹 Redis UI: http://localhost:8081 (with --profile monitoring)")
         print("   🔹 Redis: localhost:6379")
@@ -356,13 +363,13 @@ def main():
     parser.add_argument("command", nargs="?", default="help",
                        choices=[
                            # Group commands
-                           "start:core", "start:api", "start:strategy", "start:monitoring", "start:all", "start:full-stack",
-                           "stop:core", "stop:api", "stop:strategy", "stop:monitoring", "stop:all",
-                           # Individual service commands
-                           "start:redis", "start:zookeeper", "start:kafka", "start:angel-one-api", "start:risk-service", 
-                           "start:caching-service", "start:messaging-service", "start:strategy-engine",
-                           "stop:redis", "stop:zookeeper", "stop:kafka", "stop:angel-one-api", "stop:risk-service",
-                           "stop:caching-service", "stop:messaging-service", "stop:strategy-engine",
+                           "start:core", "start:database", "start:api", "start:streaming", "start:strategy", "start:monitoring", "start:all", "start:full-stack",
+                           "stop:core", "stop:database", "stop:api", "stop:streaming", "stop:strategy", "stop:monitoring", "stop:all",
+                               # Individual service commands
+                               "start:redis", "start:zookeeper", "start:kafka", "start:database-service", "start:angel-one-api", "start:risk-service", 
+                               "start:caching-service", "start:messaging-service", "start:market-data-streaming", "start:strategy-engine",
+                               "stop:redis", "stop:zookeeper", "stop:kafka", "stop:database-service", "stop:angel-one-api", "stop:risk-service",
+                               "stop:caching-service", "stop:messaging-service", "stop:market-data-streaming", "stop:strategy-engine",
                            # Other commands
                            "restart", "build", "clean-build-all", "status", "logs", "health", "help"
                        ],
@@ -383,7 +390,7 @@ def main():
             group = args.command.split(":")[1]
             # Handle individual services
             individual_services = ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", 
-                                 "caching-service", "messaging-service", "strategy-engine"]
+                                 "caching-service", "messaging-service", "market-data-streaming", "strategy-engine", "database-service"]
             if group in individual_services:
                 manager.run_docker_compose(["up", "-d", group])
                 print(f"✅ {group} started successfully!")
@@ -392,9 +399,9 @@ def main():
         
         elif args.command.startswith("stop:"):
             group = args.command.split(":")[1]
-            # Handle individual services  
+            # Handle individual services
             individual_services = ["redis", "zookeeper", "kafka", "angel-one-api", "risk-service", 
-                                 "caching-service", "messaging-service", "strategy-engine"]
+                                 "caching-service", "messaging-service", "market-data-streaming", "strategy-engine", "database-service"]
             if group in individual_services:
                 manager.run_docker_compose(["stop", group])
                 print(f"✅ {group} stopped successfully!")

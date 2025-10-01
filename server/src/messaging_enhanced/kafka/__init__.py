@@ -25,7 +25,8 @@ from .producers import (
     MarketDataProducer,
     OrderProducer,
     SentimentProducer,
-    RiskEventProducer
+    RiskEventProducer,
+    DatabaseProducer
 )
 
 # Import specialized consumers  
@@ -33,7 +34,8 @@ from .consumers import (
     MarketDataConsumer,
     OrderConsumer,
     SentimentConsumer,
-    RiskEventConsumer
+    RiskEventConsumer,
+    DatabaseConsumer
 )
 
 __all__ = [
@@ -47,10 +49,12 @@ __all__ = [
     "OrderProducer", 
     "SentimentProducer",
     "RiskEventProducer",
+    "DatabaseProducer",
     
     # Specialized consumers
     "MarketDataConsumer",
     "OrderConsumer",
     "SentimentConsumer", 
-    "RiskEventConsumer"
+    "RiskEventConsumer",
+    "DatabaseConsumer"
 ]

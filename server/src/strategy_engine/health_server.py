@@ -288,7 +288,7 @@ class StrategyEngineHealthServer:
             "risk_service": "http://risk-service:8003/health",
             "angel_one_api": "http://angel-one-api:8000/ping",
             "caching_service": "http://caching-service:8001/health",
-            "messaging_service": "http://messaging-service:8002/health"
+            "messaging_enhanced": "http://messaging-service:8002/health"
         }
         
         results = {}

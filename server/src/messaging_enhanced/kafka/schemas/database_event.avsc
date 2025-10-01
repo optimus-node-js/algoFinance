@@ -1,0 +1,104 @@
+{
+  "type": "record",
+  "name": "DatabaseEvent",
+  "namespace": "com.hft.database",
+  "doc": "Database service events for inter-service communication",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique event identifier"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Event timestamp in nanoseconds"
+    },
+    {
+      "name": "service",
+      "type": "string",
+      "default": "database_service",
+      "doc": "Source service name"
+    },
+    {
+      "name": "event_type",
+      "type": {
+        "type": "enum",
+        "name": "DatabaseEventType",
+        "symbols": [
+          "USER_CREATED", "USER_UPDATED", "USER_DELETED",
+          "ORDER_CREATED", "ORDER_UPDATED", "ORDER_CANCELLED",
+          "INSTRUMENT_CREATED", "INSTRUMENT_UPDATED",
+          "MARKET_DATA_STORED", "MARKET_DATA_BULK_STORED",
+          "STRATEGY_CREATED", "STRATEGY_UPDATED", "STRATEGY_ACTIVATED",
+          "TRADING_SIGNAL_CREATED", "TRADING_SIGNAL_EXECUTED",
+          "POSITION_CREATED", "POSITION_UPDATED",
+          "PORTFOLIO_UPDATED", "RISK_PROFILE_UPDATED",
+          "SYSTEM_LOG_CREATED", "HEALTH_CHECK_PERFORMED"
+        ]
+      },
+      "doc": "Type of database event"
+    },
+    {
+      "name": "entity_type",
+      "type": {
+        "type": "enum",
+        "name": "EntityType",
+        "symbols": [
+          "USER", "ORDER", "INSTRUMENT", "MARKET_DATA", "STRATEGY",
+          "TRADING_SIGNAL", "POSITION", "PORTFOLIO", "RISK_PROFILE",
+          "SYSTEM_LOG", "HEALTH", "UNKNOWN"
+        ]
+      },
+      "doc": "Type of entity affected"
+    },
+    {
+      "name": "entity_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "ID of the affected entity"
+    },
+    {
+      "name": "user_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "User ID associated with the event"
+    },
+    {
+      "name": "data",
+      "type": {
+        "type": "map",
+        "values": ["null", "string", "long", "double", "boolean"]
+      },
+      "default": {},
+      "doc": "Event-specific data payload"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional metadata"
+    },
+    {
+      "name": "correlation_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Correlation ID for request tracking"
+    },
+    {
+      "name": "source_ip",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Source IP address if applicable"
+    },
+    {
+      "name": "session_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Session ID if applicable"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="PY-252.26199.168">
+    <data-source name="postgres@db.prisma.io" uuid="3c20c74e-d7fb-4307-9569-f38d5ba319a8">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="POSTGRES" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>***REDACTED***</user-name>
+      <schema-mapping />
+      <ssh-properties>
+        <enabled>true</enabled>
+        <ssh-config-id>e03d9056-9189-4538-b202-46b88f75f854</ssh-config-id>
+        <local-port>5435</local-port>
+      </ssh-properties>
+      <ssl-config use-ide-store="true" use-java-store="true" use-system-store="true">
+        <enabled>true</enabled>
+        <mode>REQUIRE</mode>
+      </ssl-config>
+    </data-source>
+  </component>
+</project>

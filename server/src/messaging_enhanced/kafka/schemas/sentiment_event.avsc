@@ -1,0 +1,128 @@
+{
+  "type": "record",
+  "name": "SentimentEvent",
+  "namespace": "hft.sentiment",
+  "doc": "Sentiment analysis event for news articles and market sentiment",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique identifier for the sentiment event"
+    },
+    {
+      "name": "event_type",
+      "type": {
+        "type": "enum",
+        "name": "SentimentEventType",
+        "symbols": [
+          "NEWS_ARTICLE",
+          "SENTIMENT_ANALYSIS",
+          "COMPANY_NEWS",
+          "BREAKING_NEWS",
+          "SENTIMENT_SIGNAL",
+          "SERVICE_EVENT"
+        ]
+      },
+      "doc": "Type of sentiment event"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO 8601 timestamp when event was created"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "doc": "Source of the event (RSS, NewsAPI, GNews, etc.)"
+    },
+    {
+      "name": "article_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Article ID if event is related to a news article"
+    },
+    {
+      "name": "title",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Article title or event title"
+    },
+    {
+      "name": "content",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Article content or event description"
+    },
+    {
+      "name": "url",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Article URL if applicable"
+    },
+    {
+      "name": "published_at",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "ISO 8601 timestamp when article was published"
+    },
+    {
+      "name": "company_name",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Company name if article is company-specific"
+    },
+    {
+      "name": "company_symbol",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Stock symbol if article is company-specific"
+    },
+    {
+      "name": "sector",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Industry sector if applicable"
+    },
+    {
+      "name": "sentiment_score",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Sentiment score (-1.0 to 1.0, negative to positive)"
+    },
+    {
+      "name": "sentiment_label",
+      "type": ["null", {
+        "type": "enum",
+        "name": "SentimentLabel",
+        "symbols": ["VERY_NEGATIVE", "NEGATIVE", "NEUTRAL", "POSITIVE", "VERY_POSITIVE"]
+      }],
+      "default": null,
+      "doc": "Categorical sentiment label"
+    },
+    {
+      "name": "confidence",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Confidence score for sentiment analysis (0.0 to 1.0)"
+    },
+    {
+      "name": "tags",
+      "type": {
+        "type": "array",
+        "items": "string"
+      },
+      "default": [],
+      "doc": "Tags associated with the event"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional metadata as key-value pairs"
+    }
+  ]
+}
+

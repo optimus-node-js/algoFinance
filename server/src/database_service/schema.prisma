@@ -1,0 +1,599 @@
+// Prisma Schema for HFT Trading System
+// ====================================
+// Comprehensive database schema covering all microservices
+
+generator client {
+  provider = "prisma-client-py"
+  interface = "asyncio"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ================================
+// AUTHENTICATION & SESSIONS
+// ================================
+
+model User {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  email       String   @unique
+  password    String   // Hashed
+  isActive    Boolean  @default(true)
+  role        UserRole @default(TRADER)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  sessions    Session[]
+  apiKeys     ApiKey[]
+  strategies  Strategy[]
+  orders      Order[]
+  portfolios  Portfolio[]
+  
+  @@map("users")
+}
+
+model Session {
+  id          String    @id @default(cuid())
+  userId      String
+  token       String    @unique
+  refreshToken String?  @unique
+  expiresAt   DateTime
+  isActive    Boolean   @default(true)
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  userId      String
+  keyName     String
+  keyValue    String    @unique
+  secretKey   String?
+  clientId    String?
+  isActive    Boolean   @default(true)
+  rateLimit   Int       @default(100)
+  usageCount  Int       @default(0)
+  lastUsed    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("api_keys")
+}
+
+// ================================
+// MARKET DATA & INSTRUMENTS
+// ================================
+
+model Instrument {
+  id            String          @id @default(cuid())
+  symbol        String          @unique
+  name          String
+  exchange      Exchange
+  instrumentType InstrumentType
+  lotSize       Int             @default(1)
+  tickSize      Float           @default(0.01)
+  isActive      Boolean         @default(true)
+  sector        String?
+  industry      String?
+  marketCap     Float?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  // Relations
+  marketData    MarketData[]
+  orders        Order[]
+  positions     Position[]
+  strategies    StrategyInstrument[]
+  
+  @@map("instruments")
+}
+
+model MarketData {
+  id            String     @id @default(cuid())
+  instrumentId  String
+  timestamp     DateTime
+  open          Float
+  high          Float
+  low           Float
+  close         Float
+  volume        BigInt
+  ltp           Float      // Last Traded Price
+  bid           Float?
+  ask           Float?
+  bidQty        Int?
+  askQty        Int?
+  change        Float?
+  changePct     Float?
+  feedLatency   Int?       // Nanoseconds
+  createdAt     DateTime   @default(now())
+  
+  // Relations
+  instrument    Instrument @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
+  
+  @@index([instrumentId, timestamp])
+  @@map("market_data")
+}
+
+model NewsEvent {
+  id          String    @id @default(cuid())
+  headline    String
+  content     String?
+  source      String
+  sentiment   Float?    // -1 to 1
+  symbols     String[]  // Array of affected symbols
+  category    String?
+  importance  Int       @default(1) // 1-5 scale
+  publishedAt DateTime
+  createdAt   DateTime  @default(now())
+  
+  @@index([publishedAt])
+  @@index([symbols])
+  @@map("news_events")
+}
+
+// ================================
+// TRADING & ORDERS
+// ================================
+
+model Order {
+  id              String        @id @default(cuid())
+  userId          String
+  instrumentId    String
+  strategyId      String?
+  orderType       OrderType
+  transactionType TransactionType
+  quantity        Int
+  price           Float?
+  triggerPrice    Float?
+  stopLoss        Float?
+  target          Float?
+  productType     ProductType   @default(INTRADAY)
+  validity        OrderValidity @default(DAY)
+  status          OrderStatus   @default(PENDING)
+  brokerOrderId   String?       @unique
+  parentOrderId   String?       // For bracket/cover orders
+  averagePrice    Float?
+  filledQuantity  Int           @default(0)
+  pendingQuantity Int?
+  rejectionReason String?
+  placedAt        DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relations
+  user            User          @relation(fields: [userId], references: [id])
+  instrument      Instrument    @relation(fields: [instrumentId], references: [id])
+  strategy        Strategy?     @relation(fields: [strategyId], references: [id])
+  trades          Trade[]
+  childOrders     Order[]       @relation("ParentChildOrder")
+  parentOrder     Order?        @relation("ParentChildOrder", fields: [parentOrderId], references: [id])
+  
+  @@index([userId])
+  @@index([strategyId])
+  @@index([status])
+  @@index([placedAt])
+  @@map("orders")
+}
+
+model Trade {
+  id            String    @id @default(cuid())
+  orderId       String
+  instrumentId  String
+  quantity      Int
+  price         Float
+  value         Float
+  brokerage     Float     @default(0)
+  taxes         Float     @default(0)
+  netValue      Float
+  tradeTime     DateTime
+  tradeId       String?   @unique // Broker trade ID
+  createdAt     DateTime  @default(now())
+  
+  // Relations
+  order         Order     @relation(fields: [orderId], references: [id])
+  
+  @@index([orderId])
+  @@index([tradeTime])
+  @@map("trades")
+}
+
+model Position {
+  id              String    @id @default(cuid())
+  userId          String
+  instrumentId    String
+  quantity        Int
+  averagePrice    Float
+  currentPrice    Float?
+  pnl             Float     @default(0)
+  realizedPnl     Float     @default(0)
+  unrealizedPnl   Float     @default(0)
+  productType     ProductType
+  positionType    PositionType
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  instrument      Instrument @relation(fields: [instrumentId], references: [id])
+  
+  @@unique([userId, instrumentId, productType])
+  @@index([userId])
+  @@map("positions")
+}
+
+// ================================
+// PORTFOLIO & RISK MANAGEMENT
+// ================================
+
+model Portfolio {
+  id              String    @id @default(cuid())
+  userId          String
+  name            String
+  totalValue      Float     @default(0)
+  investedValue   Float     @default(0)
+  availableCash   Float     @default(0)
+  totalPnl        Float     @default(0)
+  dayPnl          Float     @default(0)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  user            User      @relation(fields: [userId], references: [id])
+  
+  @@map("portfolios")
+}
+
+model RiskProfile {
+  id              String    @id @default(cuid())
+  userId          String?
+  strategyId      String?
+  maxDailyLoss    Float     @default(10000)
+  maxPositionSize Float     @default(100000)
+  maxLeverage     Float     @default(1.0)
+  allowedSymbols  String[]
+  blockedSymbols  String[]
+  maxOrderValue   Float     @default(50000)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  strategy        Strategy? @relation(fields: [strategyId], references: [id])
+  
+  @@map("risk_profiles")
+}
+
+// ================================
+// STRATEGIES & AI MODELS
+// ================================
+
+model Strategy {
+  id              String              @id @default(cuid())
+  userId          String
+  name            String
+  description     String?
+  strategyType    StrategyType
+  isActive        Boolean             @default(false)
+  isBacktested    Boolean             @default(false)
+  parameters      Json                // Strategy-specific parameters
+  performance     Json?               // Performance metrics
+  riskMetrics     Json?               // Risk analysis
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  // Relations
+  user            User                @relation(fields: [userId], references: [id])
+  orders          Order[]
+  instruments     StrategyInstrument[]
+  backtests       Backtest[]
+  riskProfile     RiskProfile[]
+  signals         TradingSignal[]
+  
+  @@map("strategies")
+}
+
+model StrategyInstrument {
+  id            String     @id @default(cuid())
+  strategyId    String
+  instrumentId  String
+  allocation    Float      @default(1.0) // Percentage allocation
+  isActive      Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  
+  // Relations
+  strategy      Strategy   @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+  instrument    Instrument @relation(fields: [instrumentId], references: [id])
+  
+  @@unique([strategyId, instrumentId])
+  @@map("strategy_instruments")
+}
+
+model TradingSignal {
+  id            String        @id @default(cuid())
+  strategyId    String
+  symbol        String
+  signalType    SignalType
+  strength      Float         // 0-1 confidence
+  price         Float
+  quantity      Int?
+  stopLoss      Float?
+  target        Float?
+  timeframe     String?
+  indicators    Json?         // Technical indicators used
+  isExecuted    Boolean       @default(false)
+  executedAt    DateTime?
+  createdAt     DateTime      @default(now())
+  
+  // Relations
+  strategy      Strategy      @relation(fields: [strategyId], references: [id])
+  
+  @@index([strategyId])
+  @@index([createdAt])
+  @@map("trading_signals")
+}
+
+model Backtest {
+  id              String    @id @default(cuid())
+  strategyId      String
+  name            String
+  startDate       DateTime
+  endDate         DateTime
+  initialCapital  Float
+  finalCapital    Float?
+  totalReturn     Float?
+  sharpeRatio     Float?
+  maxDrawdown     Float?
+  winRate         Float?
+  totalTrades     Int?
+  parameters      Json      // Strategy parameters used
+  results         Json?     // Detailed results
+  status          BacktestStatus @default(PENDING)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  strategy        Strategy  @relation(fields: [strategyId], references: [id])
+  
+  @@map("backtests")
+}
+
+// ================================
+// AI & MACHINE LEARNING
+// ================================
+
+model AIModel {
+  id              String      @id @default(cuid())
+  name            String
+  modelType       ModelType
+  version         String
+  description     String?
+  parameters      Json        // Model hyperparameters
+  metrics         Json?       // Performance metrics
+  trainingData    Json?       // Training dataset info
+  isActive        Boolean     @default(false)
+  accuracy        Float?
+  precision       Float?
+  recall          Float?
+  f1Score         Float?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  @@map("ai_models")
+}
+
+model Prediction {
+  id            String    @id @default(cuid())
+  modelId       String?
+  symbol        String
+  predictionType PredictionType
+  predictedValue Float
+  confidence    Float     // 0-1
+  actualValue   Float?
+  accuracy      Float?
+  timeframe     String    // 1m, 5m, 1h, 1d etc
+  features      Json?     // Input features used
+  createdAt     DateTime  @default(now())
+  validUntil    DateTime
+  
+  @@index([symbol])
+  @@index([createdAt])
+  @@map("predictions")
+}
+
+// ================================
+// SYSTEM MONITORING & LOGS
+// ================================
+
+model SystemLog {
+  id          String    @id @default(cuid())
+  service     String    // Microservice name
+  level       LogLevel
+  message     String
+  details     Json?
+  userId      String?
+  sessionId   String?
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime  @default(now())
+  
+  @@index([service])
+  @@index([level])
+  @@index([timestamp])
+  @@map("system_logs")
+}
+
+model PerformanceMetric {
+  id          String    @id @default(cuid())
+  service     String
+  metric      String    // CPU, Memory, Latency, etc
+  value       Float
+  unit        String    // %, ms, MB, etc
+  timestamp   DateTime  @default(now())
+  
+  @@index([service, metric])
+  @@index([timestamp])
+  @@map("performance_metrics")
+}
+
+model Alert {
+  id          String      @id @default(cuid())
+  type        AlertType
+  severity    AlertSeverity
+  title       String
+  message     String
+  source      String      // Service/component that generated alert
+  isResolved  Boolean     @default(false)
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  metadata    Json?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@index([type])
+  @@index([severity])
+  @@index([isResolved])
+  @@map("alerts")
+}
+
+// ================================
+// ENUMS
+// ================================
+
+enum UserRole {
+  ADMIN
+  TRADER
+  ANALYST
+  VIEWER
+}
+
+enum Exchange {
+  NSE
+  BSE
+  MCX
+  NCDEX
+}
+
+enum InstrumentType {
+  EQUITY
+  FUTURES
+  OPTIONS
+  COMMODITY
+  CURRENCY
+  INDEX
+}
+
+enum OrderType {
+  MARKET
+  LIMIT
+  STOP_LOSS
+  STOP_LOSS_MARKET
+  BRACKET
+  COVER
+}
+
+enum TransactionType {
+  BUY
+  SELL
+}
+
+enum ProductType {
+  INTRADAY
+  DELIVERY
+  CARRYFORWARD
+}
+
+enum OrderValidity {
+  DAY
+  IOC
+  GTD
+}
+
+enum OrderStatus {
+  PENDING
+  OPEN
+  COMPLETE
+  CANCELLED
+  REJECTED
+  MODIFIED
+  PARTIALLY_FILLED
+}
+
+enum PositionType {
+  LONG
+  SHORT
+}
+
+enum StrategyType {
+  MOMENTUM
+  MEAN_REVERSION
+  ARBITRAGE
+  SCALPING
+  SWING
+  CUSTOM
+}
+
+enum SignalType {
+  BUY
+  SELL
+  HOLD
+  EXIT
+}
+
+enum BacktestStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum ModelType {
+  CLASSIFICATION
+  REGRESSION
+  REINFORCEMENT_LEARNING
+  DEEP_LEARNING
+  ENSEMBLE
+}
+
+enum PredictionType {
+  PRICE_DIRECTION
+  PRICE_TARGET
+  VOLATILITY
+  VOLUME
+  SENTIMENT
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+enum AlertType {
+  SYSTEM_ERROR
+  TRADING_ALERT
+  RISK_BREACH
+  PERFORMANCE_ISSUE
+  MARKET_EVENT
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}

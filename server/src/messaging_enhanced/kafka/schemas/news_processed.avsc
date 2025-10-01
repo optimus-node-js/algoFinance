@@ -1,0 +1,116 @@
+{
+  "type": "record",
+  "name": "NewsProcessed",
+  "namespace": "hft.news",
+  "doc": "Processed news article from Sentiment Aggregator to AI Intelligence Service",
+  "fields": [
+    {
+      "name": "article_id",
+      "type": "string",
+      "doc": "Unique identifier for the news article"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "doc": "Article title"
+    },
+    {
+      "name": "content",
+      "type": "string",
+      "doc": "Full article content"
+    },
+    {
+      "name": "url",
+      "type": "string",
+      "doc": "Article URL"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "doc": "News source (RSS, NewsAPI, GNews)"
+    },
+    {
+      "name": "published_at",
+      "type": "string",
+      "doc": "ISO 8601 timestamp when article was published"
+    },
+    {
+      "name": "processed_at",
+      "type": "string",
+      "doc": "ISO 8601 timestamp when article was processed"
+    },
+    {
+      "name": "company_mappings",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "CompanyMapping",
+          "fields": [
+            {
+              "name": "company_name",
+              "type": "string",
+              "doc": "Mapped company name"
+            },
+            {
+              "name": "stock_symbol",
+              "type": "string",
+              "doc": "Stock symbol (e.g., RELIANCE.NS)"
+            },
+            {
+              "name": "exchange",
+              "type": "string",
+              "doc": "Exchange (NSE, BSE)"
+            },
+            {
+              "name": "sector",
+              "type": ["null", "string"],
+              "default": null,
+              "doc": "Industry sector"
+            },
+            {
+              "name": "confidence_score",
+              "type": "double",
+              "doc": "Mapping confidence (0.0 to 1.0)"
+            }
+          ]
+        }
+      },
+      "default": [],
+      "doc": "Array of mapped companies found in the article"
+    },
+    {
+      "name": "relevance_score",
+      "type": "double",
+      "doc": "Multi-factor relevance score (0.0 to 1.0)"
+    },
+    {
+      "name": "market_impact_score",
+      "type": "double",
+      "doc": "Potential market impact assessment (0.0 to 1.0)"
+    },
+    {
+      "name": "source_credibility",
+      "type": "double",
+      "doc": "Source credibility rating (0.0 to 1.0)"
+    },
+    {
+      "name": "financial_keywords",
+      "type": {
+        "type": "array",
+        "items": "string"
+      },
+      "default": [],
+      "doc": "Extracted financial keywords"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional metadata as key-value pairs"
+    }
+  ]
+}

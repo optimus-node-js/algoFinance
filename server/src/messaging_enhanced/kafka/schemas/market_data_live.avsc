@@ -1,0 +1,217 @@
+{
+  "type": "record",
+  "name": "MarketDataLive",
+  "namespace": "com.hft.marketdata",
+  "doc": "Live market data from Angel One WebSocket feed for real-time trading",
+  "fields": [
+    {
+      "name": "message_id",
+      "type": "string",
+      "doc": "Unique identifier for the message"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Message timestamp in nanoseconds since epoch"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "doc": "Data source (e.g., angel_one_websocket)"
+    },
+    {
+      "name": "data_type",
+      "type": "string",
+      "doc": "Type of market data (TICK, CANDLE, ORDERBOOK, LTP)"
+    },
+    {
+      "name": "symbol",
+      "type": "string",
+      "doc": "Trading symbol (e.g., RELIANCE-EQ)"
+    },
+    {
+      "name": "exchange",
+      "type": "string",
+      "doc": "Exchange name (NSE, BSE, etc.)"
+    },
+    {
+      "name": "token",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Instrument token from Angel One"
+    },
+    {
+      "name": "ltp",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Last traded price"
+    },
+    {
+      "name": "open",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Opening price"
+    },
+    {
+      "name": "high",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Highest price"
+    },
+    {
+      "name": "low",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Lowest price"
+    },
+    {
+      "name": "close",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Previous closing price"
+    },
+    {
+      "name": "volume",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Trading volume"
+    },
+    {
+      "name": "change",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Price change from previous close"
+    },
+    {
+      "name": "change_percent",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Percentage change from previous close"
+    },
+    {
+      "name": "bid_price",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Best bid price"
+    },
+    {
+      "name": "ask_price",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Best ask price"
+    },
+    {
+      "name": "bid_quantity",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Best bid quantity"
+    },
+    {
+      "name": "ask_quantity",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Best ask quantity"
+    },
+    {
+      "name": "total_buy_quantity",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Total buy quantity in order book"
+    },
+    {
+      "name": "total_sell_quantity",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Total sell quantity in order book"
+    },
+    {
+      "name": "average_price",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Volume weighted average price"
+    },
+    {
+      "name": "lower_circuit",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Lower circuit limit"
+    },
+    {
+      "name": "upper_circuit",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Upper circuit limit"
+    },
+    {
+      "name": "52_week_high",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "52-week high price"
+    },
+    {
+      "name": "52_week_low",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "52-week low price"
+    },
+    {
+      "name": "depth",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "MarketDepth",
+          "fields": [
+            {
+              "name": "buy",
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "record",
+                  "name": "DepthLevel",
+                  "fields": [
+                    {"name": "price", "type": "double"},
+                    {"name": "quantity", "type": "long"},
+                    {"name": "orders", "type": "long"}
+                  ]
+                }
+              }
+            },
+            {
+              "name": "sell",
+              "type": {
+                "type": "array",
+                "items": "DepthLevel"
+              }
+            }
+          ]
+        }
+      ],
+      "default": null,
+      "doc": "Market depth data (order book levels)"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": ["null", "string", "long", "double", "boolean"]
+      },
+      "default": {},
+      "doc": "Additional metadata from Angel One WebSocket"
+    },
+    {
+      "name": "correlation_id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Correlation ID for request tracing"
+    },
+    {
+      "name": "sequence_number",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Sequence number for message ordering"
+    }
+  ]
+}
+
+

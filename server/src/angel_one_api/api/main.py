@@ -49,6 +49,28 @@ from .middleware import (
 from .exceptions import setup_exception_handlers
 from .dependencies import get_rate_limiter, get_auth_manager
 
+# Import Kafka messaging for order events
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent.parent / "messaging_enhanced"))
+
+try:
+    from messaging_enhanced.kafka import OrderProducer, KafkaManager
+    from messaging_enhanced.kafka.producers.order_producer import get_order_producer, close_order_producer
+    from messaging_enhanced.kafka.kafka_manager import get_kafka_manager, close_kafka_manager
+    KAFKA_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️ Kafka messaging not available - running without order event publishing: {e}")
+    KAFKA_AVAILABLE = False
+
+# Import WebSocket manager for live market data
+try:
+    from websocket.websocket_manager import get_websocket_manager, close_websocket_manager
+    WEBSOCKET_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️ WebSocket manager not available - running without live market data: {e}")
+    WEBSOCKET_AVAILABLE = False
+
 # Import configuration and services
 import sys
 from pathlib import Path
@@ -61,6 +83,50 @@ from services.authentication import AuthManager
 
 # Initialize logger
 logger = get_infrastructure_logger("fastapi_main")
+
+# Helper function to publish order events to Kafka
+async def publish_order_event(event_type: str, order_data: dict, correlation_id: str = None):
+    """
+    Publish order events to Kafka for inter-service communication.
+    
+    Args:
+        event_type: Type of order event (ORDER_PLACED, ORDER_EXECUTED, ORDER_CANCELLED, etc.)
+        order_data: Order data dictionary
+        correlation_id: Optional correlation ID for request tracing
+    """
+    if not KAFKA_AVAILABLE or not hasattr(app.state, 'order_producer'):
+        return
+    
+    try:
+        import time
+        import uuid
+        from datetime import datetime
+        
+        # Create order event message
+        order_event = {
+            "event_id": str(uuid.uuid4()),
+            "timestamp": int(time.time() * 1_000_000_000),  # nanoseconds
+            "service": "angel_one_api",
+            "event_type": event_type,
+            "order_id": order_data.get("order_id", ""),
+            "symbol": order_data.get("symbol", ""),
+            "exchange": order_data.get("exchange", ""),
+            "quantity": order_data.get("quantity", 0),
+            "price": order_data.get("price", 0.0),
+            "order_type": order_data.get("order_type", ""),
+            "side": order_data.get("side", ""),
+            "status": order_data.get("status", ""),
+            "user_id": order_data.get("user_id", ""),
+            "correlation_id": correlation_id,
+            "metadata": order_data
+        }
+        
+        # Publish to Kafka
+        await app.state.order_producer.send_order_event(order_event)
+        logger.info(f"📤 Published order event: {event_type} for {order_data.get('symbol', 'unknown')}")
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to publish order event: {e}")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -84,6 +150,39 @@ async def lifespan(app: FastAPI):
         if settings.RABBITMQ_URL != "disabled":
             logger.info("📡 Initializing RabbitMQ connection...")
             startup_tasks.append(init_rabbitmq())
+        
+        # Initialize Kafka for order events
+        if KAFKA_AVAILABLE:
+            logger.info("🔄 Initializing Kafka for order events...")
+            try:
+                kafka_manager = get_kafka_manager()
+                order_producer = get_order_producer("angel_one_api_service")
+                
+                # Create Kafka topics for order events and live market data
+                await kafka_manager.create_topic("hft-order-events", num_partitions=3, replication_factor=1)
+                await kafka_manager.create_topic("hft-execution-events", num_partitions=3, replication_factor=1)
+                await kafka_manager.create_topic("hft-market-data-live-ticks", num_partitions=6, replication_factor=1)
+                await kafka_manager.create_topic("hft-market-data-live-ltp", num_partitions=6, replication_factor=1)
+                await kafka_manager.create_topic("hft-market-data-live-candles", num_partitions=3, replication_factor=1)
+                await kafka_manager.create_topic("hft-market-data-live-orderbook", num_partitions=3, replication_factor=1)
+                
+                app.state.kafka_manager = kafka_manager
+                app.state.order_producer = order_producer
+                logger.info("✅ Kafka order event publishing initialized")
+            except Exception as e:
+                logger.warning(f"⚠️ Failed to initialize Kafka: {e}")
+                KAFKA_AVAILABLE = False
+        
+        # Initialize WebSocket for live market data
+        if WEBSOCKET_AVAILABLE:
+            logger.info("🌐 Initializing WebSocket for live market data...")
+            try:
+                websocket_manager = get_websocket_manager(auth_manager)
+                app.state.websocket_manager = websocket_manager
+                logger.info("✅ WebSocket manager initialized")
+            except Exception as e:
+                logger.warning(f"⚠️ Failed to initialize WebSocket manager: {e}")
+                WEBSOCKET_AVAILABLE = False
         
         # Initialize authentication manager
         logger.info("🔐 Initializing authentication manager...")
@@ -157,6 +256,17 @@ async def lifespan(app: FastAPI):
     logger.info("🛑 Shutting down Angel One FastAPI Service...")
     
     try:
+        # Close WebSocket connections
+        if WEBSOCKET_AVAILABLE and hasattr(app.state, 'websocket_manager'):
+            logger.info("🌐 Closing WebSocket connections...")
+            await close_websocket_manager(app.state.websocket_manager)
+        
+        # Close Kafka connections
+        if KAFKA_AVAILABLE and hasattr(app.state, 'order_producer'):
+            logger.info("🔄 Closing Kafka connections...")
+            await close_order_producer()
+            await close_kafka_manager()
+        
         # Close RabbitMQ connection
         if hasattr(app.state, 'rabbitmq_connection'):
             logger.info("📡 Closing RabbitMQ connection...")

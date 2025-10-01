@@ -1,0 +1,39 @@
+# Market Data Streaming Service Dockerfile
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY server/requirements.txt /app/requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY server/src/market_data_streaming /app/market_data_streaming
+COPY server/src/core /app/core
+COPY server/src/messaging_enhanced /app/messaging_enhanced
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Expose port
+EXPOSE 8005
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8005/health', timeout=5)" || exit 1
+
+# Run the service
+CMD ["python", "-m", "market_data_streaming.main"]
+

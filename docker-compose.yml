@@ -110,6 +110,8 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - WEBSOCKET_ENABLED=true
+      - LIVE_DATA_ENABLED=true
     volumes:
       - ./server/src/angel_one_api:/app/angel_one_api
       - ./server/src/core:/app/core
@@ -206,6 +208,51 @@ services:
       timeout: 10s
       retries: 3
 
+  # Market Data Streaming Service (Phase 8 - Live Data Ready)
+  market-data-streaming:
+    build:
+      context: .
+      dockerfile: Dockerfile.market-data-streaming
+    container_name: hft-market-data-streaming
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      angel-one-api:
+        condition: service_healthy
+      messaging-service:
+        condition: service_healthy
+    ports:
+      - "8005:8005"
+    env_file:
+      - .env
+    environment:
+      - ANGEL_ONE_API_URL=http://angel-one-api:8000
+      - MESSAGING_SERVICE_URL=http://messaging-service:8002
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MARKET_DATA_HOST=0.0.0.0
+      - MARKET_DATA_PORT=8005
+      - LIVE_DATA_ENABLED=true
+      - WEBSOCKET_ENABLED=true
+      - PYTHONPATH=/app
+    volumes:
+      - ./server/src/market_data_streaming:/app/market_data_streaming
+      - ./server/src/core:/app/core
+      - ./server/src/messaging_enhanced:/app/messaging_enhanced
+      - ./logs/market_data_streaming:/app/logs
+    networks:
+      - hft-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8005/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
   # Strategy Engine Service
   strategy-engine:
     build:
@@ -252,6 +299,103 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
+    restart: unless-stopped
+
+  # Database Service (Prisma + PostgreSQL)
+  database-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.database-service
+    container_name: hft-database-service
+    ports:
+      - "8006:8006"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - PRISMA_API_KEY=${PRISMA_API_KEY}
+      - DB_NAME=${DB_NAME}
+      - PYTHONPATH=/app/src
+    volumes:
+      - ./server/src/database_service:/app/src/database_service
+      - ./logs/database_service:/app/logs
+    networks:
+      - hft-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8006/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # Sentiment Aggregator Service
+  sentiment-aggregator:
+    build:
+      context: .
+      dockerfile: Dockerfile.sentiment-aggregator
+    container_name: hft-sentiment-aggregator
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      database-service:
+        condition: service_healthy
+    ports:
+      - "8010:8010"
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - NEWSAPI_KEY=${NEWSAPI_KEY}
+      - GNEWS_API_KEY=${GNEWS_API_KEY}
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+      - ./server/src/sentiment_aggregator/.env:/app/src/sentiment_aggregator/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - hft-network
+    restart: unless-stopped
+
+  ai-intelligence-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.ai-intelligence-service
+    container_name: hft-ai-intelligence-service
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      database-service:
+        condition: service_healthy
+      sentiment-aggregator:
+        condition: service_healthy
+    ports:
+      - "8011:8011"
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - LOG_LEVEL=INFO
+      - MODEL_CACHE_SIZE=1000
+      - INFERENCE_BATCH_SIZE=32
+    volumes:
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+      - ./server/src/ai_intelligence_service/models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8011/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - hft-network
     restart: unless-stopped
 
   # Monitoring & Observability (Optional)

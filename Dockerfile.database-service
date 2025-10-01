@@ -1,0 +1,43 @@
+# Dockerfile for Database Service
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy database service requirements
+COPY server/src/database_service/requirements.txt .
+
+# Install Python dependencies (lightweight, focused on database service only)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY server/src/ ./src/
+
+# Copy .env file for environment variables
+COPY .env /app/.env
+
+# Set Python path
+ENV PYTHONPATH=/app/src
+
+# Generate Prisma client
+WORKDIR /app/src/database_service
+RUN prisma generate
+
+# Back to app directory
+WORKDIR /app
+
+# Expose port
+EXPOSE 8006
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8006/health || exit 1
+
+# Run the application
+CMD ["python", "-m", "uvicorn", "src.database_service.main:app", "--host", "0.0.0.0", "--port", "8006"]

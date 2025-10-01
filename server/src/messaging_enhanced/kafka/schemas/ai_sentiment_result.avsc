@@ -1,0 +1,104 @@
+{
+  "type": "record",
+  "name": "AISentimentResult",
+  "namespace": "hft.ai",
+  "doc": "Sentiment analysis result from AI Intelligence Service",
+  "fields": [
+    {
+      "name": "analysis_id",
+      "type": "string",
+      "doc": "Unique identifier for this sentiment analysis"
+    },
+    {
+      "name": "article_id",
+      "type": "string",
+      "doc": "Reference to the original news article"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "doc": "ISO 8601 timestamp when analysis was performed"
+    },
+    {
+      "name": "model_version",
+      "type": "string",
+      "doc": "Version of the sentiment analysis model used"
+    },
+    {
+      "name": "sentiment_score",
+      "type": "double",
+      "doc": "Sentiment score (-1.0 to 1.0, negative to positive)"
+    },
+    {
+      "name": "sentiment_label",
+      "type": {
+        "type": "enum",
+        "name": "SentimentLabel",
+        "symbols": ["VERY_NEGATIVE", "NEGATIVE", "NEUTRAL", "POSITIVE", "VERY_POSITIVE"]
+      },
+      "doc": "Categorical sentiment label"
+    },
+    {
+      "name": "confidence_score",
+      "type": "double",
+      "doc": "Model confidence in the sentiment prediction (0.0 to 1.0)"
+    },
+    {
+      "name": "processing_time_ms",
+      "type": "int",
+      "doc": "Time taken for sentiment analysis in milliseconds"
+    },
+    {
+      "name": "company_sentiments",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "CompanySentiment",
+          "fields": [
+            {
+              "name": "company_name",
+              "type": "string",
+              "doc": "Company name"
+            },
+            {
+              "name": "stock_symbol",
+              "type": "string",
+              "doc": "Stock symbol"
+            },
+            {
+              "name": "sentiment_score",
+              "type": "double",
+              "doc": "Company-specific sentiment score"
+            },
+            {
+              "name": "relevance",
+              "type": "double",
+              "doc": "How relevant the article is to this company (0.0 to 1.0)"
+            }
+          ]
+        }
+      },
+      "default": [],
+      "doc": "Company-specific sentiment breakdowns"
+    },
+    {
+      "name": "key_phrases",
+      "type": {
+        "type": "array",
+        "items": "string"
+      },
+      "default": [],
+      "doc": "Key phrases that influenced the sentiment"
+    },
+    {
+      "name": "market_indicators",
+      "type": {
+        "type": "map",
+        "values": "double"
+      },
+      "default": {},
+      "doc": "Market-related indicators extracted from the text"
+    }
+  ]
+}

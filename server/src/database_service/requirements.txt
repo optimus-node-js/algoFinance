@@ -1,0 +1,45 @@
+# Database Service Requirements
+# ============================
+# Minimal dependencies for Prisma + PostgreSQL database service
+
+# FastAPI & Web Framework
+fastapi==0.117.1
+uvicorn[standard]==0.36.0
+starlette==0.48.0
+pydantic==2.11.9
+pydantic-settings==2.10.1
+
+# Async & Performance
+asyncio
+async-timeout==5.0.1
+
+# Database & Prisma
+prisma==0.11.0
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+
+# HTTP Client
+httpx>=0.19.0
+
+# Utilities
+python-dotenv==1.1.1
+typing-extensions==4.15.0
+annotated-types==0.7.0
+python-dateutil==2.9.0.post0
+click==8.3.0
+
+# Jinja2 for Prisma
+jinja2>=2.11.2
+tomlkit
+nodeenv
+
+# Core Python Libraries
+requests==2.32.5
+urllib3==2.5.0
+certifi==2025.8.3
+charset-normalizer==3.4.3
+idna==3.10
+
+# Development & Testing (optional)
+pytest
+pytest-asyncio

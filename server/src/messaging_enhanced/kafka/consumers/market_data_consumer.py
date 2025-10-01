@@ -50,7 +50,13 @@ class MarketDataConsumer:
         self.schema_registry = get_schema_registry()
         
         # Configuration
-        self.topics = ["hft-market-data"]
+        self.topics = [
+            "hft-market-data",
+            "hft-market-data-live-ticks",
+            "hft-market-data-live-ltp", 
+            "hft-market-data-live-candles",
+            "hft-market-data-live-orderbook"
+        ]
         self.batch_size = 100
         self.poll_timeout = 1.0  # seconds
         
@@ -65,6 +71,7 @@ class MarketDataConsumer:
         self.consumer = None
         self.is_running = False
         self.callbacks: Dict[str, Callable] = {}
+        self.live_data_callbacks: Dict[str, Callable] = {}
         
         # Initialize consumer
         self._initialize_consumer(auto_offset_reset)
@@ -96,6 +103,18 @@ class MarketDataConsumer:
         """
         self.callbacks[callback_name] = callback_func
         logger.info(f"Registered callback: {callback_name}")
+    
+    def register_live_data_callback(self, callback_name: str, callback_func: Callable):
+        """
+        Register a callback function for live market data processing.
+        
+        Args:
+            callback_name: Name of the callback
+            callback_func: Function to call with live market data
+                          Should accept (symbol, live_data) arguments
+        """
+        self.live_data_callbacks[callback_name] = callback_func
+        logger.info(f"Registered live data callback: {callback_name}")
     
     def unregister_callback(self, callback_name: str):
         """Unregister a callback function."""

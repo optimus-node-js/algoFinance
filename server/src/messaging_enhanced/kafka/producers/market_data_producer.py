@@ -54,6 +54,62 @@ class MarketDataProducer:
         
         logger.info(f"MarketDataProducer initialized: {producer_id}")
     
+    def send_live_market_data(self, live_data: dict) -> bool:
+        """
+        Send live market data from WebSocket to Kafka.
+        
+        Args:
+            live_data: Live market data dictionary from Angel One WebSocket
+            
+        Returns:
+            True if message was queued successfully
+        """
+        try:
+            # Serialize using market_data_live schema
+            serialized = self.schema_registry.serialize('market_data_live', live_data)
+            if not serialized:
+                logger.error(f"Failed to serialize live market data for {live_data.get('symbol', 'unknown')}")
+                with self._lock:
+                    self.errors += 1
+                return False
+            
+            # Determine topic based on data type
+            data_type = live_data.get('data_type', 'TICK')
+            topic_suffix = {
+                'TICK': 'live-ticks',
+                'LTP': 'live-ltp', 
+                'CANDLE': 'live-candles',
+                'ORDERBOOK': 'live-orderbook'
+            }.get(data_type, 'live-data')
+            
+            topic = f"hft-market-data-{topic_suffix}"
+            
+            # Send to Kafka (use symbol as key for partitioning)
+            success = self.kafka_manager.send_message(
+                topic=topic,
+                message=serialized,
+                key=f"{live_data.get('exchange', '')}:{live_data.get('symbol', '')}",
+                producer_id=self.producer_id,
+                callback=self._delivery_callback
+            )
+            
+            if success:
+                with self._lock:
+                    self.messages_sent += 1
+                    self.bytes_sent += len(serialized)
+                logger.debug(f"📤 Live market data sent: {live_data.get('symbol', 'unknown')} ({data_type})")
+            else:
+                with self._lock:
+                    self.errors += 1
+            
+            return success
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to send live market data: {e}")
+            with self._lock:
+                self.errors += 1
+            return False
+    
     def send_market_tick(
         self,
         symbol: str,
